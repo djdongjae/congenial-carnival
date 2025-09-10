@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=no">
+    <title>몬테소리 콘텐츠</title>
+    <style>
+        svg {
+            /*border: 1px solid #000;*/
+            display: block;
+            margin: 0px auto;
+            cursor: crosshair;
+            width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+
+<body>
+
+    <?xml version="1.0" encoding="UTF-8"?>
+    <svg id="paintSvg" data-name="paintSvg" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="90 176 467 408">
+        <!-- Generator: Adobe Illustrator 29.3.0, SVG Export Plug-In . SVG Version: 2.1.0 Build 146)  -->
+        <defs>
+            <style>
+                .st0,
+                .st1,
+                .st2,
+                .st3,
+                .st4,
+                .st5 {
+                    fill: none;
+                }
+
+                .st0,
+                .st1,
+                .st2,
+                .st3,
+                .st5 {
+                    stroke: #d3d3d4;
+                    stroke-linecap: round;
+                    stroke-linejoin: round;
+                    stroke-width: .81px;
+                }
+
+                .st1 {
+                    stroke-dasharray: 3.9 3.9;
+                }
+
+                .st6 {
+                    fill: #fff;
+                }
+
+                .st7 {
+                    fill: #231815;
+                }
+
+                .st2 {
+                    stroke-dasharray: 3.85 3.85;
+                }
+
+                .st3 {
+                    stroke-dasharray: 4;
+                }
+
+                .st8 {
+                    fill: #e0e3df;
+                }
+
+                .st4 {
+                    stroke: #231815;
+                    stroke-miterlimit: 10;
+                    stroke-width: .61px;
+                }
+
+                .st5 {
+                    stroke-dasharray: 3.86 3.86;
+                }
+
+                .st9 {
+                    fill: #ad2e30;
+                }
+            </style>
+        </defs>
+        <defs>
+            <clipPath id="clipPath1">
+                <use id="clipRef1" href="#fillArea1" />
+            </clipPath>
+            <clipPath id="clipPath2">
+                <use id="clipRef2" href="#fillArea2" />
+            </clipPath>
+            <clipPath id="clipPath3">
+                <use id="clipRef3" href="#fillArea3" />
+            </clipPath>
+        </defs>
+        <g>
+            <rect class="st8" x="221.45" y="199.04" width="165.45" height="165.45" rx="12.21" ry="12.21" />
+            <rect class="st9" x="216.32" y="193.92" width="165.45" height="165.45" rx="12.21" ry="12.21" />
+            <polygon class="st6" points="299.6 220.8 238.15 326.94 359.94 326.94 299.6 220.8" id="fillArea1"
+                onmousedown="onclickPath(1)" ontouchstart="onclickPath(1)" />
+            <g>
+                <polyline class="st0" points="301.07 235.44 300.09 233.7 299.08 235.43" />
+                <line class="st1" x1="297.11" y1="238.8" x2="250.95" y2="317.99" />
+                <polyline class="st0" points="249.96 319.68 248.96 321.4 250.96 321.4" />
+                <line class="st5" x1="254.81" y1="321.38" x2="345.45" y2="321.08" />
+                <polyline class="st0" points="347.38 321.07 349.38 321.06 348.4 319.32" />
+                <line class="st2" x1="346.51" y1="315.97" x2="302.02" y2="237.12" />
+            </g>
+        </g>
+        <g>
+            <rect class="st8" x="128" y="388.24" width="165.45" height="165.45" rx="12.21" ry="12.21" />
+            <rect class="st9" x="122.87" y="383.11" width="165.45" height="165.45" rx="12.21" ry="12.21" />
+            <rect class="st6" x="149.49" y="411.36" width="111.83" height="111.83" id="fillArea2"
+                onmousedown="onclickPath(2)" ontouchstart="onclickPath(2)" />
+            <rect class="st3" x="156.53" y="418.43" width="97.7" height="97.7" />
+        </g>
+        <g>
+            <rect class="st8" x="325.62" y="388.24" width="165.45" height="165.45" rx="12.21" ry="12.21" />
+            <rect class="st9" x="320.49" y="383.11" width="165.45" height="165.45" rx="12.21" ry="12.21" />
+            <circle class="st6" cx="403.02" cy="466.51" r="62.04" id="fillArea3" onmousedown="onclickPath(3)"
+                ontouchstart="onclickPath(3)" />
+            <circle class="st3" cx="403.02" cy="466.85" r="56.09" />
+        </g>
+        <!-- 사용자가 그리는 영역 (마스킹 적용) -->
+        <g id="drawingGroup1" clip-path="url(#clipPath1)"></g>
+        <g id="drawingGroup2" clip-path="url(#clipPath2)"></g>
+        <g id="drawingGroup3" clip-path="url(#clipPath3)"></g>
+    </svg>
+
+    <script>
+        const svg = document.getElementById("paintSvg");
+
+        // 📌 해상도별 viewBox 자동 설정
+        (function setViewBoxByDevice() {
+            const w = window.innerWidth;
+            const h = window.innerHeight;
+
+            // 삼성
+            if (w === 1180 && h === 648) {
+                svg.setAttribute("viewBox", "-75 179 750 507");
+            }
+            // 큐브
+            else {
+                svg.setAttribute("viewBox", "-75 179 750 507");
+            }
+        })();
+
+        let clipRef = document.getElementById("clipRef1");
+        let drawingGroup = document.getElementById("drawingGroup1"); // 초기 그리기 그룹은 첫 번째 영역
+        let fillArea = document.getElementById("fillArea1");
+        let drawing = false;
+        let currentPath = null;
+        let callFlutter = false;
+
+        // 확대/축소 변수
+        let scale = 1;
+        let lastDistance = 0;
+        let currentX = 0, currentY = 0; // 드래그 위치
+        let isDragging = false;
+
+        // 영역 클릭 시 해당 영역으로 전환
+        function onclickPath(id) {
+            fillArea = document.getElementById(`fillArea${id}`);
+
+            if (!fillArea) return;
+
+            drawingGroup = document.getElementById(`drawingGroup${id}`);
+        }
+
+        // SVG 좌표 변환 함수
+        function getSVGCoords(event) {
+            const point = svg.createSVGPoint();
+            let x, y;
+
+            if (event.touches) {
+                x = event.touches[0].clientX;
+                y = event.touches[0].clientY;
+            } else {
+                x = event.clientX;
+                y = event.clientY;
+            }
+
+            point.x = x;
+            point.y = y;
+            return point.matrixTransform(svg.getScreenCTM().inverse());
+        }
+
+        // 경로 내부 점인지 확인하는 함수
+        function isInsidePath(x, y) {
+            const point = svg.createSVGPoint();
+            point.x = x;
+            point.y = y;
+            return fillArea.isPointInFill(point);
+        }
+
+        // 그리기 시작 함수
+        function startDrawing(e) {
+            e.preventDefault();
+            const {
+                x,
+                y
+            } = getSVGCoords(e);
+            if (!isInsidePath(x, y)) return;
+
+            drawing = true;
+            currentPath = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+            currentPath.setAttribute("stroke", "red");
+            currentPath.setAttribute("stroke-width", "8");
+            currentPath.setAttribute("fill", "none");
+            currentPath.setAttribute("stroke-linecap", "round");
+            currentPath.setAttribute("points", `${x},${y}`);
+            drawingGroup.appendChild(currentPath);
+
+            resetDrawTimer();
+        }
+
+        // 그리기 이동 함수
+        function moveDrawing(e) {
+            if (!drawing) return;
+            e.preventDefault();
+
+            const {
+                x,
+                y
+            } = getSVGCoords(e);
+            if (!isInsidePath(x, y)) return;
+
+            let points = currentPath.getAttribute("points");
+            points += ` ${x},${y}`;
+            currentPath.setAttribute("points", points);
+        }
+
+        // 그리기 종료 함수
+        function stopDrawing() {
+            drawing = false;
+        }
+
+        // Flutter 호출 함수
+        function resetDrawTimer() {
+            if (!callFlutter) {
+                console.log(callFlutter);
+                callFlutter = true;
+                window.drawCanvas.postMessage(JSON.stringify({ data: 'draw' }));
+            }
+        }
+
+        // 줌 처리 함수
+        function handleZoom(e) {
+            if (e.touches.length === 2) {
+                let dx = e.touches[0].clientX - e.touches[1].clientX;
+                let dy = e.touches[0].clientY - e.touches[1].clientY;
+                let distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (lastDistance !== 0) {
+                    let delta = distance - lastDistance;
+                    scale += delta * 0.005; // 줌 속도
+                    scale = Math.max(1.0, Math.min(2.5, scale)); // 줌 한계 (0.5배 ~ 3배)
+                    svg.setAttribute("style", `transform: scale(${scale})`);
+                }
+
+                lastDistance = distance; // 마지막 거리 업데이트
+                e.preventDefault(); // 기본 동작(스크롤 등)을 막음
+            }
+        }
+
+        // 첫 번째 터치 시 초기화
+        function handleTouchStart(e) {
+            if (e.touches.length === 2) {
+                let dx = e.touches[0].clientX - e.touches[1].clientX;
+                let dy = e.touches[0].clientY - e.touches[1].clientY;
+                lastDistance = Math.sqrt(dx * dx + dy * dy); // 초기 거리 계산
+            }
+        }
+
+        // 터치 끝날 때
+        function handleTouchEnd(e) {
+            if (e.touches.length < 2) {
+                lastDistance = 0; // 두 손가락이 하나로 떨어지면 초기화
+            }
+        }
+
+        // 드래그 이동 함수
+        function handleMouseDown(e) {
+            isDragging = true;
+            currentX = e.clientX;
+            currentY = e.clientY;
+            svg.style.cursor = 'grabbing';
+        }
+
+        function handleMouseMove(e) {
+            if (!isDragging) return;
+
+            const dx = e.clientX - currentX;
+            const dy = e.clientY - currentY;
+            currentX = e.clientX;
+            currentY = e.clientY;
+
+            const transform = svg.getAttribute('transform') || 'translate(0, 0)';
+            const regex = /translate\((-?\d+), (-?\d+)\)/;
+            const match = transform.match(regex);
+
+            const newX = (match ? parseInt(match[1]) : 0) + dx;
+            const newY = (match ? parseInt(match[2]) : 0) + dy;
+            svg.setAttribute('transform', `translate(${newX}, ${newY})`);
+        }
+
+        function handleMouseUp() {
+            isDragging = false;
+            svg.style.cursor = 'grab';
+        }
+
+        function handleMouseLeave() {
+            isDragging = false;
+            svg.style.cursor = 'grab';
+        }
+
+        // 마우스 이벤트 리스너
+        svg.addEventListener("mousedown", startDrawing);
+        svg.addEventListener("mousemove", moveDrawing);
+        svg.addEventListener("mouseup", stopDrawing);
+        svg.addEventListener("mouseleave", stopDrawing);
+
+        // 터치 이벤트 리스너
+        svg.addEventListener("touchstart", function (e) {
+            if (e.touches.length === 1) {
+                startDrawing(e); // 한 손가락으로 그리기 시작
+            } else if (e.touches.length === 2) {
+                handleTouchStart(e); // 두 손가락 줌 시작
+            }
+        });
+
+        svg.addEventListener("touchmove", function (e) {
+            if (e.touches.length === 1) {
+                moveDrawing(e); // 한 손가락으로 그리기 이동
+            } else if (e.touches.length === 2) {
+                handleZoom(e); // 두 손가락 줌 처리
+            }
+        });
+
+        svg.addEventListener("touchend", function (e) {
+            stopDrawing(); // 그리기 종료
+            handleTouchEnd(e); // 두 손가락 처리 종료
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,109 @@
+{
+    "categories": [
+      {
+        "category": "한식",
+        "items": [
+          {
+            "name": "김치찌개",
+            "image": "packages/flutter_package_games/game/k_food1.png",
+            "price": 9000
+          },
+          {
+            "name": "순두부찌개",
+            "image": "packages/flutter_package_games/game/k_food2.png",
+            "price": 9000
+          },
+          {
+            "name": "설렁탕",
+            "image": "packages/flutter_package_games/game/k_food3.png",
+            "price": 9500
+          },
+          {
+            "name": "소고기국밥",
+            "image": "packages/flutter_package_games/game/k_food4.png",
+            "price": 10000
+          },
+          {
+            "name": "육개장",
+            "image": "packages/flutter_package_games/game/k_food5.png",
+            "price": 9000
+          },
+          {
+            "name": "알탕",
+            "image": "packages/flutter_package_games/game/k_food6.png",
+            "price": 9500
+          }
+        ]
+      },
+      {
+        "category": "중식",
+        "items": [
+          {
+            "name": "짜장면",
+            "image": "packages/flutter_package_games/game/c_food1.png",
+            "price": 7000
+          },
+          {
+            "name": "짬뽕",
+            "image": "packages/flutter_package_games/game/c_food2.png",
+            "price": 10000
+          },
+          {
+            "name": "마파두부",
+            "image": "packages/flutter_package_games/game/c_food3.png",
+            "price": 9500
+          },
+          {
+            "name": "잡채밥",
+            "image": "packages/flutter_package_games/game/c_food4.png",
+            "price": 9500
+          },
+          {
+            "name": "짜장밥",
+            "image": "packages/flutter_package_games/game/c_food5.png",
+            "price": 6000
+          },
+          {
+            "name": "탕수육",
+            "image": "packages/flutter_package_games/game/c_food6.png",
+            "price": 13000
+          },
+          {
+            "name": "군만두",
+            "image": "packages/flutter_package_games/game/c_food7.png",
+            "price": 6000
+          }
+        ]
+      },
+      {
+        "category": "분식",
+        "items": [
+          {
+            "name": "라면",
+            "image": "packages/flutter_package_games/game/s_food1.png",
+            "price": 4500
+          },
+          {
+            "name": "김밥",
+            "image": "packages/flutter_package_games/game/s_food2.png",
+            "price": 5000
+          },
+          {
+            "name": "떡볶이",
+            "image": "packages/flutter_package_games/game/s_food3.png",
+            "price": 4500
+          },
+          {
+            "name": "순대",
+            "image": "packages/flutter_package_games/game/s_food4.png",
+            "price": 5000
+          },
+          {
+            "name": "오뎅",
+            "image": "packages/flutter_package_games/game/s_food5.png",
+            "price": 1000
+          }
+        ]
+      }
+    ]
+  }
