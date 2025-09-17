@@ -1,0 +1,17 @@
+{
+    "kiosks": [
+      {
+        "type": "foodcourt",
+        "name": "푸드코트",
+        "image":"packages/flutter_package_games/game/food_main.png"
+      },
+      {
+        "type": "cafe",
+        "name": "카페",
+        "image":"packages/flutter_package_games/game/cafe_main.png"
+      }
+    ]
+  }
+
+
+  
