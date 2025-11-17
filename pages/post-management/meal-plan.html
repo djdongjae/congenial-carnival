@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>식단표</title>
+    
+    <!-- CSS와 JS는 JavaScript에서 동적으로 로드됩니다 -->
+    
+</head>
+<body>
+    <div class="container">
+        <div class="content">
+            <!-- 헤더 섹션 -->
+            <div class="page-header">
+                <h1><i class="fas fa-utensils"></i> 식단표</h1>
+                <p>주간 및 월간 식단표를 관리합니다</p>
+            </div>
+
+            <!-- 통계 카드 섹션 -->
+            <div class="stats-section">
+                <div class="stat-card stat-primary">
+                    <div class="stat-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="total-plans">0</h3>
+                        <p>전체 식단표</p>
+                    </div>
+                </div>
+                <div class="stat-card stat-success">
+                    <div class="stat-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="active-plans">0</h3>
+                        <p>활성 식단표</p>
+                    </div>
+                </div>
+                <div class="stat-card stat-warning">
+                    <div class="stat-icon">
+                        <i class="fas fa-calendar-week"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="weekly-plans">0</h3>
+                        <p>주간 식단표</p>
+                    </div>
+                </div>
+                <div class="stat-card stat-info">
+                    <div class="stat-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="monthly-plans">0</h3>
+                        <p>월간 식단표</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 검색 및 필터 섹션 -->
+            <div class="search-section">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="search-input" placeholder="식단표명으로 검색..." />
+                    <button class="btn-search" onclick="searchPlans()">
+                        <i class="fas fa-search"></i> 검색
+                    </button>
+                    <button class="btn-reset" onclick="resetSearch()">
+                        <i class="fas fa-redo"></i> 초기화
+                    </button>
+                </div>
+                <div class="filter-section">
+                    <select id="type-filter" class="filter-select" onchange="filterPlans()">
+                        <option value="">전체 유형</option>
+                        <option value="weekly">주간</option>
+                        <option value="monthly">월간</option>
+                    </select>
+                    <select id="status-filter" class="filter-select" onchange="filterPlans()">
+                        <option value="">전체 상태</option>
+                        <option value="active">활성</option>
+                        <option value="inactive">비활성</option>
+                    </select>
+                    <input type="month" id="date-filter" class="filter-select" onchange="filterPlans()" />
+                </div>
+            </div>
+
+            <!-- 액션 버튼 섹션 -->
+            <div class="action-section">
+                <button class="btn-action btn-primary" onclick="addPlan()">
+                    <i class="fas fa-plus"></i> 식단표 등록
+                </button>
+                <button class="btn-action btn-success" onclick="copyPlan()">
+                    <i class="fas fa-copy"></i> 식단표 복사
+                </button>
+                <button class="btn-action btn-info" onclick="refreshPlans()">
+                    <i class="fas fa-sync-alt"></i> 새로고침
+                </button>
+            </div>
+
+            <!-- 식단표 목록 섹션 -->
+            <div class="meal-plans-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-list"></i> 식단표 목록</h2>
+                    <span class="result-count" id="result-count">총 0개</span>
+                </div>
+                <div class="meal-plans-list" id="meal-plans-list">
+                    <!-- 동적으로 로드되는 식단표 목록 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 식단표 등록/수정 모달 -->
+    <div class="modal" id="plan-modal" style="display: none;">
+        <div class="modal-content modal-extra-large">
+            <div class="modal-header">
+                <h3 id="modal-title">식단표 등록</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="plan-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>유형 <span class="required">*</span></label>
+                            <select id="plan-type" required onchange="toggleMealPlanType()">
+                                <option value="weekly">주간</option>
+                                <option value="monthly">월간</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>기간 <span class="required">*</span></label>
+                            <input type="date" id="plan-start-date" required onchange="updatePlanPeriod()" />
+                        </div>
+                        <div class="form-group">
+                            <label>종료일</label>
+                            <input type="date" id="plan-end-date" readonly />
+                        </div>
+                        <div class="form-group">
+                            <label>상태</label>
+                            <select id="plan-status">
+                                <option value="active">활성</option>
+                                <option value="inactive">비활성</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- 주간 식단표 -->
+                    <div id="weekly-meal-plan" class="meal-plan-table">
+                        <h4>주간 식단표</h4>
+                        <table class="meal-table">
+                            <thead>
+                                <tr>
+                                    <th>구분</th>
+                                    <th>월</th>
+                                    <th>화</th>
+                                    <th>수</th>
+                                    <th>목</th>
+                                    <th>금</th>
+                                    <th>토</th>
+                                    <th>일</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>아침</td>
+                                    <td><input type="text" class="meal-input" data-day="mon" data-meal="breakfast" /></td>
+                                    <td><input type="text" class="meal-input" data-day="tue" data-meal="breakfast" /></td>
+                                    <td><input type="text" class="meal-input" data-day="wed" data-meal="breakfast" /></td>
+                                    <td><input type="text" class="meal-input" data-day="thu" data-meal="breakfast" /></td>
+                                    <td><input type="text" class="meal-input" data-day="fri" data-meal="breakfast" /></td>
+                                    <td><input type="text" class="meal-input" data-day="sat" data-meal="breakfast" /></td>
+                                    <td><input type="text" class="meal-input" data-day="sun" data-meal="breakfast" /></td>
+                                </tr>
+                                <tr>
+                                    <td>점심</td>
+                                    <td><input type="text" class="meal-input" data-day="mon" data-meal="lunch" /></td>
+                                    <td><input type="text" class="meal-input" data-day="tue" data-meal="lunch" /></td>
+                                    <td><input type="text" class="meal-input" data-day="wed" data-meal="lunch" /></td>
+                                    <td><input type="text" class="meal-input" data-day="thu" data-meal="lunch" /></td>
+                                    <td><input type="text" class="meal-input" data-day="fri" data-meal="lunch" /></td>
+                                    <td><input type="text" class="meal-input" data-day="sat" data-meal="lunch" /></td>
+                                    <td><input type="text" class="meal-input" data-day="sun" data-meal="lunch" /></td>
+                                </tr>
+                                <tr>
+                                    <td>저녁</td>
+                                    <td><input type="text" class="meal-input" data-day="mon" data-meal="dinner" /></td>
+                                    <td><input type="text" class="meal-input" data-day="tue" data-meal="dinner" /></td>
+                                    <td><input type="text" class="meal-input" data-day="wed" data-meal="dinner" /></td>
+                                    <td><input type="text" class="meal-input" data-day="thu" data-meal="dinner" /></td>
+                                    <td><input type="text" class="meal-input" data-day="fri" data-meal="dinner" /></td>
+                                    <td><input type="text" class="meal-input" data-day="sat" data-meal="dinner" /></td>
+                                    <td><input type="text" class="meal-input" data-day="sun" data-meal="dinner" /></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- 월간 식단표 -->
+                    <div id="monthly-meal-plan" class="meal-plan-table" style="display: none;">
+                        <h4>월간 식단표</h4>
+                        <div class="monthly-plan-info">
+                            <p>월간 식단표는 주간 식단표를 반복하여 표시합니다.</p>
+                            <p id="monthly-plan-period"></p>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal btn-secondary" onclick="closeModal()">취소</button>
+                <button class="btn-modal btn-primary" onclick="savePlan()">저장</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 동적 리소스 로딩 -->
+    <script>
+        function loadResources() {
+            const commonScript = document.createElement('script');
+            commonScript.src = '../../js/common.js?_t='+(new Date().toISOString().replace(/[-:T]/g, '').substring(0, 14));
+            commonScript.onload = async function() {
+                try {
+                    const success = await loadCommonResources();
+                    if (success) {
+                        await loadJS('../../js/pages/post-management/meal-plan.js');
+                    }
+                } catch (error) {
+                    console.error('리소스 로드 중 오류 발생:', error);
+                }
+            };
+            commonScript.onerror = function() {
+                console.error('common.js 로드 실패');
+            };
+            document.head.appendChild(commonScript);
+        }
+        
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', loadResources);
+        } else {
+            loadResources();
+        }
+    </script>
+</body>
+</html>
+

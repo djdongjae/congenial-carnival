@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>생활지원사 위치조회</title>
+    
+    <!-- CSS와 JS는 JavaScript에서 동적으로 로드됩니다 -->
+    
+</head>
+<body>
+    <div class="container" style="padding: 0; margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden;">
+        <div class="content" style="flex: 1; min-height: 0; display: flex; flex-direction: column; padding: 0; margin: 0; overflow: hidden;">
+            <!-- 상단 헤더 -->
+            <div style="padding: 10px 15px; border-bottom: 2px solid #007bff; flex-shrink: 0;">
+                <h2 style="margin: 0; font-size: 18px; font-weight: bold;">○ 생활지원사 위치조회</h2>
+            </div>
+
+            <div style="flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden; padding: 10px;">
+                <!-- 검색 및 액션 바 -->
+                <div style="margin-bottom: 10px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; padding: 10px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #dee2e6; flex-shrink: 0;">
+                    <label style="display: flex; align-items: center; gap: 5px; font-size: 14px;">
+                        조회일자
+                        <input type="text" id="inquiryDate" style="padding: 6px 10px; width: 120px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;" readonly>
+                        <i class="fas fa-calendar-alt" id="calendarIcon" style="cursor: pointer; color: #007bff;"></i>
+                    </label>
+                    <button id="btnProgressStatus" class="btn btn-primary" style="padding: 8px 20px; font-size: 14px;">진행상황</button>
+                    <button id="btnExcel" class="btn btn-success" style="padding: 8px 20px; font-size: 14px;">EXCEL</button>
+                </div>
+
+                <!-- 메인 그리드 -->
+                <div style="flex: 1; min-height: 0; overflow: hidden; border: 1px solid #dee2e6; border-radius: 4px; background: white; display: flex; flex-direction: column;">
+                    <div style="flex: 1; min-height: 0; overflow: auto;">
+                        <table id="LocationGrid" style="width: 100%;"></table>
+                    </div>
+                    <div id="LocationPager"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 업무일지 모달 -->
+    <div id="workJournalModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10001;">
+        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 30px; border-radius: 8px; width: 800px; max-width: 90%; max-height: 90vh; overflow-y: auto; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #eee; padding-bottom: 15px;">
+                <h2 style="margin: 0; font-size: 20px; font-weight: bold;">업무일지 관리</h2>
+                <button id="closeWorkJournalModal" style="cursor: pointer; background: none; border: none; font-size: 24px; color: #666; padding: 0; width: 30px; height: 30px; line-height: 30px;">×</button>
+            </div>
+            <div id="workJournalContent">
+                <!-- 업무일지 내용이 동적으로 로드됨 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 진행상황 모달 (계획/실적 대비표) -->
+    <div id="progressStatusModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10002;">
+        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 0; border-radius: 8px; width: 1200px; max-width: 95%; max-height: 95vh; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: flex; flex-direction: column;">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-bottom: 1px solid #dee2e6; background: #f8f9fa;">
+                <h2 style="margin: 0; font-size: 18px; font-weight: bold;">생활지원사 위치조회 > 진행상황</h2>
+                <button id="closeProgressStatusModal" style="cursor: pointer; background: none; border: none; font-size: 24px; color: #666; padding: 0; width: 30px; height: 30px; line-height: 30px;">×</button>
+            </div>
+            <div id="progressStatusContent" style="flex: 1; overflow-y: auto; padding: 0;">
+                <!-- 계획/실적 대비표 내용이 동적으로 로드됨 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 동적 리소스 로딩 -->
+    <script>
+        // CSS와 JS 파일을 동적으로 로드하는 함수
+        function loadResources() {
+            const commonScript = document.createElement('script');
+            commonScript.src = '../../js/common.js?_t='+(new Date().toISOString().replace(/[-:T]/g, '').substring(0, 14));
+            commonScript.onload = async function() {
+                try {
+                    // 공통 리소스 로드
+                    const success = await loadCommonResources();
+                    if (success) {
+                        // 공통 그리드 스크립트 로드
+                        await loadJS('../../js/commonGrid.js');
+                        // Support Worker Location 페이지 전용 스크립트 로드
+                        await loadJS('../../js/pages/plan-performance/support-worker-location.js');
+                        
+                        // 초기화 함수가 정의될 때까지 대기 후 초기화
+                        let attempts = 0;
+                        const maxAttempts = 50; // 5초 대기
+                        const checkInit = setInterval(() => {
+                            attempts++;
+                            if (typeof initSupportWorkerLocation === 'function') {
+                                clearInterval(checkInit);
+                                initSupportWorkerLocation();
+                            } else if (attempts >= maxAttempts) {
+                                clearInterval(checkInit);
+                                console.error('initSupportWorkerLocation 함수를 찾을 수 없습니다');
+                            }
+                        }, 100);
+                    }
+                } catch (error) {
+                    console.error('리소스 로드 중 오류 발생:', error);
+                }
+            };
+            commonScript.onerror = function() {
+                console.error('common.js 로드 실패');
+            };
+            document.head.appendChild(commonScript);
+        }
+        
+        // DOM 로드 완료 후 리소스 로드
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', loadResources);
+        } else {
+            loadResources();
+        }
+    </script>
+</body>
+</html>

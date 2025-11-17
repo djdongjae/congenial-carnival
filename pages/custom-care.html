@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>맞춤케어</title>
+    
+    <!-- CSS와 JS는 JavaScript에서 동적으로 로드됩니다 -->
+    
+</head>
+<body>
+    <div class="container">
+        <div class="content">
+            <!-- 헤더 섹션 -->
+            <div class="page-header">
+                <h1><i class="fas fa-home"></i> 맞춤케어</h1>
+                <p>대상자별 맞춤형 케어 서비스를 관리하고 모니터링합니다</p>
+            </div>
+
+            <!-- 통계 카드 섹션 -->
+            <div class="stats-section">
+                <div class="stat-card stat-primary">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="total-beneficiaries">0</h3>
+                        <p>전체 대상자</p>
+                    </div>
+                </div>
+                <div class="stat-card stat-success">
+                    <div class="stat-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="active-care">0</h3>
+                        <p>진행 중인 케어</p>
+                    </div>
+                </div>
+                <div class="stat-card stat-warning">
+                    <div class="stat-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="scheduled-care">0</h3>
+                        <p>예정된 케어</p>
+                    </div>
+                </div>
+                <div class="stat-card stat-info">
+                    <div class="stat-icon">
+                        <i class="fas fa-user-nurse"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="care-workers">0</h3>
+                        <p>배정된 지원사</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 주요 기능 섹션 -->
+            <div class="features-section">
+                <div class="feature-card" onclick="navigateToCarePlan()">
+                    <div class="feature-icon">
+                        <i class="fas fa-clipboard-list"></i>
+                    </div>
+                    <h3>케어 계획 관리</h3>
+                    <p>대상자별 맞춤 케어 계획을 수립하고 관리합니다</p>
+                    <div class="feature-badge">중요</div>
+                </div>
+                <div class="feature-card" onclick="navigateToCareHistory()">
+                    <div class="feature-icon">
+                        <i class="fas fa-history"></i>
+                    </div>
+                    <h3>케어 이력 조회</h3>
+                    <p>과거 케어 서비스 이력을 조회하고 확인합니다</p>
+                </div>
+                <div class="feature-card" onclick="navigateToCareSchedule()">
+                    <div class="feature-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <h3>케어 일정 관리</h3>
+                    <p>케어 서비스 일정을 등록하고 관리합니다</p>
+                </div>
+                <div class="feature-card" onclick="navigateToCareEvaluation()">
+                    <div class="feature-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <h3>케어 평가</h3>
+                    <p>케어 서비스의 효과를 평가하고 개선합니다</p>
+                </div>
+            </div>
+
+            <!-- 최근 활동 섹션 -->
+            <div class="activity-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-clock"></i> 최근 케어 활동</h2>
+                    <button class="btn-view-all" onclick="viewAllActivities()">전체 보기</button>
+                </div>
+                <div class="activity-list" id="activity-list">
+                    <!-- 동적으로 로드되는 활동 목록 -->
+                    <div class="activity-item">
+                        <div class="activity-icon">
+                            <i class="fas fa-user-check"></i>
+                        </div>
+                        <div class="activity-content">
+                            <h4>케어 서비스 시작</h4>
+                            <p>김○○님의 맞춤케어 서비스가 시작되었습니다</p>
+                            <span class="activity-time">2024-01-15 10:30</span>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon">
+                            <i class="fas fa-file-medical"></i>
+                        </div>
+                        <div class="activity-content">
+                            <h4>케어 계획 수정</h4>
+                            <p>이○○님의 케어 계획이 업데이트되었습니다</p>
+                            <span class="activity-time">2024-01-15 09:15</span>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon">
+                            <i class="fas fa-calendar-plus"></i>
+                        </div>
+                        <div class="activity-content">
+                            <h4>일정 등록</h4>
+                            <p>박○○님의 케어 일정이 등록되었습니다</p>
+                            <span class="activity-time">2024-01-14 16:45</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 빠른 액세스 섹션 -->
+            <div class="quick-access-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-bolt"></i> 빠른 액세스</h2>
+                </div>
+                <div class="quick-access-buttons">
+                    <button class="quick-btn" onclick="quickAddCarePlan()">
+                        <i class="fas fa-plus-circle"></i>
+                        <span>새 케어 계획</span>
+                    </button>
+                    <button class="quick-btn" onclick="quickRegisterSchedule()">
+                        <i class="fas fa-calendar-plus"></i>
+                        <span>일정 등록</span>
+                    </button>
+                    <button class="quick-btn" onclick="quickSearchBeneficiary()">
+                        <i class="fas fa-search"></i>
+                        <span>대상자 검색</span>
+                    </button>
+                    <button class="quick-btn" onclick="quickViewReports()">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>케어 현황</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 동적 리소스 로딩 -->
+    <script>
+        // CSS와 JS 파일을 동적으로 로드하는 함수
+        function loadResources() {
+            const commonScript = document.createElement('script');
+            commonScript.src = '../js/common.js?_t='+(new Date().toISOString().replace(/[-:T]/g, '').substring(0, 14));
+            commonScript.onload = async function() {
+                try {
+                    // 공통 리소스 로드
+                    const success = await loadCommonResources();
+                    if (success) {
+                        // Custom Care 페이지 전용 스크립트 로드
+                        await loadJS('../js/pages/custom-care.js');
+                    }
+                } catch (error) {
+                    console.error('리소스 로드 중 오류 발생:', error);
+                }
+            };
+            commonScript.onerror = function() {
+                console.error('common.js 로드 실패');
+            };
+            document.head.appendChild(commonScript);
+        }
+        
+        // DOM 로드 완료 후 리소스 로드
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', loadResources);
+        } else {
+            loadResources();
+        }
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>사후관리 업무일지 대장</title>
+    
+    <!-- CSS와 JS는 JavaScript에서 동적으로 로드됩니다 -->
+    
+</head>
+<body>
+    <div class="container" style="height: 100%; display: flex; flex-direction: column;">
+        <!-- 헤더 -->
+        <div class="header" style="padding: 15px 20px; background: #f8f9fa !important; background-color: #f8f9fa !important; border-bottom: 1px solid #dee2e6;">
+            <div class="panel-header" style="padding: 0;">
+                <h2 style="font-size: 1.2rem; font-weight: 600; color: #333 !important; margin: 0;">사후관리 > 업무일지 대장</h2>
+                <p style="font-size: 0.9rem; color: #666 !important; margin: 5px 0 0 0;">○ 사후관리 업무일지</p>
+            </div>
+        </div>
+        
+        <div class="content" style="display: flex; flex-direction: column; flex: 1; min-height: 0; padding: 20px; gap: 20px; overflow: hidden;">
+            <!-- 검색 영역 -->
+            <div class="search-section" style="background-color: #ffffff; border: 1px solid #dee2e6; border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <div style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+                    <!-- 조회기간 -->
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <label style="font-size: 14px; font-weight: 500; color: #333; white-space: nowrap;">조회기간</label>
+                        <input type="date" id="startDate" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                        <span style="font-size: 14px; color: #666;">~</span>
+                        <input type="date" id="endDate" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                    </div>
+                    
+                    <!-- 지원사 -->
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <label style="font-size: 14px; font-weight: 500; color: #333; white-space: nowrap;">지원사</label>
+                        <select id="selectSupporter" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; min-width: 150px;">
+                            <option value="">전체</option>
+                        </select>
+                    </div>
+                    
+                    <!-- 대상자 -->
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <label style="font-size: 14px; font-weight: 500; color: #333; white-space: nowrap;">대상자</label>
+                        <select id="selectBeneficiary" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; min-width: 150px;">
+                            <option value="">전체</option>
+                        </select>
+                    </div>
+                    
+                    <!-- 검색 버튼 -->
+                    <button id="btnSearch" class="btn btn-primary" style="padding: 8px 20px; font-size: 14px; white-space: nowrap;">검색</button>
+                </div>
+            </div>
+            
+            <!-- 데이터 테이블 -->
+            <div class="table-section" style="flex: 1; min-height: 0; background-color: #ffffff; border: 1px solid #dee2e6; border-radius: 8px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <div class="grid-container" style="flex: 1; min-height: 0; overflow: hidden; display: flex; flex-direction: column; padding: 15px;">
+                    <table id="WorkLogGrid"></table>
+                    <div id="WorkLogPager"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 업무일지 수정 팝업 -->
+    <div id="workLogEditModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+        <div style="background-color: #fff; border-radius: 8px; padding: 25px; width: 90%; max-width: 900px; max-height: 90%; overflow: auto; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #dee2e6; padding-bottom: 15px;">
+                <h3 style="font-size: 1.3rem; font-weight: 600; color: #333; margin: 0;">업무일지 수정</h3>
+                <button id="btnCloseWorkLogEdit" style="background: none; border: none; font-size: 28px; cursor: pointer; color: #666; padding: 0; width: 30px; height: 30px; line-height: 30px;">×</button>
+            </div>
+            <div id="workLogEditContent" style="min-height: 400px;">
+                <!-- 업무일지 수정 내용이 여기에 표시됩니다 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 동적 리소스 로딩 -->
+    <script>
+        // CSS와 JS 파일을 동적으로 로드하는 함수
+        function loadResources() {
+            const commonScript = document.createElement('script');
+            commonScript.src = '../../js/common.js?_t='+(new Date().toISOString().replace(/[-:T]/g, '').substring(0, 14));
+            commonScript.onload = async function() {
+                try {
+                    // 공통 리소스 로드
+                    const success = await loadCommonResources();
+                    if (success) {
+                        // 공통 그리드 스크립트 로드
+                        await loadJS('../../js/commonGrid.js');
+                        // 업무일지 대장 페이지 전용 스크립트 로드
+                        await loadJS('../../js/pages/aftercare-management/work-log-ledger.js');
+                        
+                        // initWorkLogLedger 함수가 정의될 때까지 대기 후 초기화
+                        let attempts = 0;
+                        const maxAttempts = 50; // 5초 대기
+                        const checkInitWorkLogLedger = setInterval(() => {
+                            attempts++;
+                            if (typeof initWorkLogLedger === 'function') {
+                                clearInterval(checkInitWorkLogLedger);
+                                initWorkLogLedger();
+                            } else if (attempts >= maxAttempts) {
+                                clearInterval(checkInitWorkLogLedger);
+                                console.error('initWorkLogLedger 함수를 찾을 수 없습니다');
+                            }
+                        }, 100);
+                    }
+                } catch (error) {
+                    console.error('리소스 로드 중 오류 발생:', error);
+                }
+            };
+            commonScript.onerror = function() {
+                console.error('common.js 로드 실패');
+            };
+            document.head.appendChild(commonScript);
+        }
+        
+        // DOM 로드 완료 후 리소스 로드
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', loadResources);
+        } else {
+            loadResources();
+        }
+    </script>
+</body>
+</html>
+

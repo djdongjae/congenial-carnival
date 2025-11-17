@@ -1,59 +1,105 @@
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
-  <!--
-    If you are serving your web app in a path other than the root, change the
-    href value below to reflect the base path you are serving from.
-
-    The path provided below has to start and end with a slash "/" in order for
-    it to work correctly.
-
-    For more details:
-    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
-
-    This is a placeholder for base href that will be replaced by the value of
-    the `--base-href` argument provided to `flutter build`.
-  -->
-  <base href="./">
-
-  <meta charset="UTF-8">
-  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A new Flutter project.">
-
-  <!-- iOS meta tags & icons -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="flutter_silveredu_game">
-  <link rel="apple-touch-icon" href="icons/Icon-192.png">
-
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="favicon.png"/>
-
-  <title>flutter_silveredu_game</title>
-  <link rel="manifest" href="manifest.json">
-
-  <script>
-    // The value below is injected by flutter build, do not touch.
-    const serviceWorkerVersion = "4116195003";
-  </script>
-  <!-- This script adds the flutter initialization JS code -->
-  <script src="flutter.js" defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>효톡 2.0 - 맞춤케어 관리시스템</title>
+    <!-- CSS와 JS는 JavaScript에서 동적으로 로드됩니다 -->
 </head>
-<body>
-  <script>
-    window.addEventListener('load', function(ev) {
-      // Download main.dart.js
-      _flutter.loader.loadEntrypoint({
-        serviceWorker: {
-          serviceWorkerVersion: serviceWorkerVersion,
-        },
-        onEntrypointLoaded: function(engineInitializer) {
-          engineInitializer.initializeEngine().then(function(appRunner) {
-            appRunner.runApp();
-          });
+<body style="display: none;">
+    <!-- 상단 헤더 -->
+    <header class="header">
+        <div class="header-left">
+            <button class="menu-toggle" id="menu-toggle" title="메뉴 닫기">📁</button>
+            <div class="logo">
+                <span class="logo-text">孝 Talk</span>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="user-info">
+                <span class="settings-icon">⚙️</span>
+                <span class="user-name">실버에듀넷-TEST 임현정</span>
+                <span class="dropdown-arrow">▼</span>
+            </div>
+      
+        </div>
+    </header>
+
+    <!-- 메인 컨테이너 -->
+    <div class="main-container">
+        <!-- 좌측 사이드바 -->
+        <aside class="sidebar">
+            <nav class="sidebar-nav">
+                <ul class="nav-menu" id="nav-menu">
+                    <!-- JSON에서 동적으로 로드되는 메뉴들이 여기에 추가됩니다 -->
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- 메인 콘텐츠 영역 -->
+        <main class="main-content">
+            <!-- 탭 컨테이너 -->
+            <div class="tab-container">
+                <div class="tab-header">
+                    <div class="tab-nav-left">
+                        <button class="tab-hamburger" id="tab-hamburger" title="모든 탭 보기">☰</button>
+                        <button class="tab-scroll-btn" id="scroll-left" title="왼쪽으로 스크롤">‹</button>
+                    </div>
+                    <div class="tabs" id="tabs-container">
+                        <!-- 동적으로 생성되는 탭들이 여기에 추가됩니다 -->
+                    </div>
+                    <div class="tab-nav-right">
+                        <button class="tab-scroll-btn" id="scroll-right" title="오른쪽으로 스크롤">›</button>
+                        <button class="tab-btn" id="close-all-tabs" title="모든 탭 닫기">×</button>
+                    </div>
+                </div>
+                <div class="tab-content" id="tab-content">
+                    <!-- 동적으로 생성되는 iframe들이 여기에 추가됩니다 -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // CSS와 JS 파일을 동적으로 로드하는 함수
+        function loadResources() {
+            // 이미 common.js가 로드되었거나 로딩 중이면 중복 로딩 방지
+            if (window.commonJsLoaded || document.querySelector('script[src*="common.js"]')) {
+                return;
+            }
+            
+            // 로딩 중 플래그 설정
+            window.commonJsLoaded = true;
+            
+            const commonScript = document.createElement('script');
+             commonScript.src = '../js/common.js?_t='+(new Date().toISOString().replace(/[-:T]/g, '').substring(0, 14));
+             commonScript.onload = async function() {
+                try {
+                    // common.js의 함수들이 정의되었는지 확인
+                    if (typeof loadCSS === 'function' && typeof loadJS === 'function') {
+                        loadCSS('../css/styles.css');
+                        loadJS('../js/script.js');
+                    }
+                    document.body.style.display = 'block';
+                } catch (error) {
+                    console.error('리소스 로드 중 오류 발생:', error);
+                }
+            };
+            commonScript.onerror = function() {
+                console.error('common.js 로드 실패');
+            };
+            document.head.appendChild(commonScript);
         }
-      });
-    });
-  </script>
+        
+        // DOM 로드 완료 후 리소스 로드 (한 번만 실행)
+        if (!window.resourcesLoaded) {
+            window.resourcesLoaded = true;
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', loadResources);
+            } else {
+                loadResources();
+            }
+        }
+    </script>
 </body>
 </html>

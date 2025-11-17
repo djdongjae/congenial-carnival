@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>스크롤 테스트 페이지</title>
+    
+    <!-- CSS와 JS는 JavaScript에서 동적으로 로드됩니다 -->
+</head>
+<body>
+    <div class="scroll-indicator" id="scrollIndicator">
+        가로: <span id="scrollX">0</span>px | 세로: <span id="scrollY">0</span>px
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>🧪 스크롤 테스트 페이지</h1>
+            <p>가로세로 스크롤 기능을 테스트해보세요!</p>
+        </div>
+
+        <div class="input-test-section">
+            <h2>📝 입력 테스트 섹션</h2>
+            <p>탭을 전환해도 입력한 내용이 유지되는지 테스트해보세요!</p>
+            
+            <div class="input-group">
+                <label for="test-name">이름:</label>
+                <input type="text" id="test-name" placeholder="이름을 입력하세요">
+            </div>
+            
+            <div class="input-group">
+                <label for="test-email">이메일:</label>
+                <input type="text" id="test-email" placeholder="이메일을 입력하세요">
+            </div>
+            
+            <div class="input-group">
+                <label for="test-message">메시지:</label>
+                <textarea id="test-message" placeholder="메시지를 입력하세요"></textarea>
+            </div>
+            
+            <div class="button-group">
+                <button class="test-button primary" onclick="showResult()">제출</button>
+                <button class="test-button secondary" onclick="clearForm()">초기화</button>
+            </div>
+            
+            <div class="result-box" id="result-box">
+                <h3>입력 결과:</h3>
+                <div id="result-content"></div>
+            </div>
+        </div>
+
+        <div class="input-test-section">
+            <h2>💬 메시지 테스트 섹션</h2>
+            <p>성공 및 오류 메시지 토스트를 테스트해보세요!</p>
+            
+            <div class="button-group">
+                <button class="test-button primary" onclick="testSuccessMessage()">성공 메시지 테스트</button>
+                <button class="test-button secondary" onclick="testErrorMessage()">오류 메시지 테스트</button>
+                <button class="test-button primary" onclick="testMultipleMessages()">여러 메시지 테스트</button>
+                <button class="test-button success" onclick="testMessageWithDuration()">시간 설정 메시지 테스트</button>
+            </div>
+        </div>
+        
+    <!-- 동적 리소스 로딩 -->
+    <script>
+        // CSS와 JS 파일을 동적으로 로드하는 함수
+        function loadResources() {
+            const commonScript = document.createElement('script');
+            commonScript.src = '../js/common.js?_t='+(new Date().toISOString().replace(/[-:T]/g, '').substring(0, 14));
+            commonScript.onload = async function() {
+                try {
+                    // 공통 리소스 로드
+                    const success = await loadCommonResources();
+                    if (success) {
+                        console.log('리소스 로드 완료');
+                    }
+                } catch (error) {
+                    console.error('리소스 로드 중 오류 발생:', error);
+                }
+            };
+            commonScript.onerror = function() {
+                console.error('common.js 로드 실패');
+            };
+            document.head.appendChild(commonScript);
+        }
+        
+        // DOM 로드 완료 후 리소스 로드
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', loadResources);
+        } else {
+            loadResources();
+        }
+    </script>
+    
+    <script>
+        // 스크롤 위치 표시 업데이트
+        function updateScrollPosition() {
+            const scrollX = window.pageXOffset || document.documentElement.scrollLeft;
+            const scrollY = window.pageYOffset || document.documentElement.scrollTop;
+            
+            document.getElementById('scrollX').textContent = scrollX;
+            document.getElementById('scrollY').textContent = scrollY;
+        }
+
+        // 스크롤 이벤트 리스너
+        window.addEventListener('scroll', updateScrollPosition);
+        window.addEventListener('resize', updateScrollPosition);
+
+        // 페이지 로드 시 초기화
+        updateScrollPosition();
+
+
+
+
+
+        // 입력 폼 제출
+        function showResult() {
+            const name = document.getElementById('test-name').value;
+            const email = document.getElementById('test-email').value;
+            const message = document.getElementById('test-message').value;
+            
+            if (!name && !email && !message) {
+                showError('최소 하나의 필드를 입력해주세요!');
+                return;
+            }
+            
+            const resultBox = document.getElementById('result-box');
+            const resultContent = document.getElementById('result-content');
+            
+            resultContent.innerHTML = `
+                <p><strong>이름:</strong> ${name || '(입력 안 함)'}</p>
+                <p><strong>이메일:</strong> ${email || '(입력 안 함)'}</p>
+                <p><strong>메시지:</strong> ${message || '(입력 안 함)'}</p>
+                <p style="color: #28a745; margin-top: 10px;">✅ 입력이 성공적으로 저장되었습니다!</p>
+            `;
+            
+            resultBox.classList.add('show');
+            showMessage('입력이 성공적으로 저장되었습니다!');
+        }
+
+        // 폼 초기화
+        function clearForm() {
+            document.getElementById('test-name').value = '';
+            document.getElementById('test-email').value = '';
+            document.getElementById('test-message').value = '';
+            document.getElementById('result-box').classList.remove('show');
+            showMessage('폼이 초기화되었습니다!');
+        }
+
+        // 메시지 테스트 함수들
+        function testSuccessMessage() {
+            showMessage('테스트 성공 메시지입니다! 🎉');
+        }
+
+        function testErrorMessage() {
+            showError('테스트 오류 메시지입니다! ⚠️');
+        }
+
+        function testMultipleMessages() {
+            showMessage('첫 번째 성공 메시지');
+            setTimeout(() => {
+                showError('두 번째 오류 메시지');
+            }, 1000);
+            setTimeout(() => {
+                showMessage('세 번째 성공 메시지');
+            }, 2000);
+        }
+        
+        function testMessageWithDuration() {
+           //
+
+            showMessage('1초 동안만 표시됩니다', 1000);
+            setTimeout(() => {
+                showMessage('3초 동안 표시됩니다 (기본값)', 3000);
+            }, 1500);
+            setTimeout(() => {
+                showMessage('5초 동안 표시됩니다', 5000);
+            }, 3000);
+            setTimeout(() => {
+                showMessage('10초 동안 표시됩니다', 10000);
+            }, 4500); 
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>공지사항</title>
+    
+    <!-- CSS와 JS는 JavaScript에서 동적으로 로드됩니다 -->
+    
+</head>
+<body>
+    <div class="container">
+        <div class="content">
+            <!-- 헤더 섹션 -->
+            <div class="page-header">
+                <h1><i class="fas fa-bullhorn"></i> 공지사항</h1>
+                <p>중요 공지사항을 작성하고 관리합니다</p>
+            </div>
+
+            <!-- 통계 카드 섹션 -->
+            <div class="stats-section">
+                <div class="stat-card stat-primary">
+                    <div class="stat-icon">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="total-posts">0</h3>
+                        <p>전체 공지</p>
+                    </div>
+                </div>
+                <div class="stat-card stat-warning">
+                    <div class="stat-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="important-posts">0</h3>
+                        <p>중요 공지</p>
+                    </div>
+                </div>
+                <div class="stat-card stat-info">
+                    <div class="stat-icon">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="total-views">0</h3>
+                        <p>전체 조회수</p>
+                    </div>
+                </div>
+                <div class="stat-card stat-success">
+                    <div class="stat-icon">
+                        <i class="fas fa-calendar-day"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="today-posts">0</h3>
+                        <p>오늘 등록</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 검색 및 필터 섹션 -->
+            <div class="search-section">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="search-input" placeholder="제목, 내용으로 검색..." />
+                    <button class="btn-search" onclick="searchPosts()">
+                        <i class="fas fa-search"></i> 검색
+                    </button>
+                    <button class="btn-reset" onclick="resetSearch()">
+                        <i class="fas fa-redo"></i> 초기화
+                    </button>
+                </div>
+                <div class="filter-section">
+                    <select id="importance-filter" class="filter-select" onchange="filterPosts()">
+                        <option value="">전체</option>
+                        <option value="important">중요</option>
+                        <option value="normal">일반</option>
+                    </select>
+                    <select id="category-filter" class="filter-select" onchange="filterPosts()">
+                        <option value="">전체 카테고리</option>
+                        <option value="general">일반</option>
+                        <option value="event">행사</option>
+                        <option value="schedule">일정</option>
+                        <option value="system">시스템</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- 액션 버튼 섹션 -->
+            <div class="action-section">
+                <button class="btn-action btn-primary" onclick="addPost()">
+                    <i class="fas fa-plus"></i> 공지 등록
+                </button>
+                <button class="btn-action btn-info" onclick="refreshPosts()">
+                    <i class="fas fa-sync-alt"></i> 새로고침
+                </button>
+            </div>
+
+            <!-- 공지사항 목록 섹션 -->
+            <div class="posts-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-list"></i> 공지사항 목록</h2>
+                    <span class="result-count" id="result-count">총 0개</span>
+                </div>
+                <div class="posts-list" id="posts-list">
+                    <!-- 동적으로 로드되는 공지사항 목록 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 공지사항 등록/수정 모달 -->
+    <div class="modal" id="post-modal" style="display: none;">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h3 id="modal-title">공지사항 등록</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="post-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>카테고리 <span class="required">*</span></label>
+                            <select id="post-category" required>
+                                <option value="general">일반</option>
+                                <option value="event">행사</option>
+                                <option value="schedule">일정</option>
+                                <option value="system">시스템</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>중요도</label>
+                            <select id="post-importance">
+                                <option value="normal">일반</option>
+                                <option value="important">중요</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>제목 <span class="required">*</span></label>
+                        <input type="text" id="post-title" required />
+                    </div>
+                    <div class="form-group">
+                        <label>내용 <span class="required">*</span></label>
+                        <textarea id="post-content" rows="10" required></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>게시 시작일</label>
+                            <input type="date" id="post-start-date" />
+                        </div>
+                        <div class="form-group">
+                            <label>게시 종료일</label>
+                            <input type="date" id="post-end-date" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="post-pinned" /> 상단 고정
+                        </label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal btn-secondary" onclick="closeModal()">취소</button>
+                <button class="btn-modal btn-primary" onclick="savePost()">저장</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 동적 리소스 로딩 -->
+    <script>
+        function loadResources() {
+            const commonScript = document.createElement('script');
+            commonScript.src = '../../js/common.js?_t='+(new Date().toISOString().replace(/[-:T]/g, '').substring(0, 14));
+            commonScript.onload = async function() {
+                try {
+                    const success = await loadCommonResources();
+                    if (success) {
+                        await loadJS('../../js/pages/post-management/announcements.js');
+                    }
+                } catch (error) {
+                    console.error('리소스 로드 중 오류 발생:', error);
+                }
+            };
+            commonScript.onerror = function() {
+                console.error('common.js 로드 실패');
+            };
+            document.head.appendChild(commonScript);
+        }
+        
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', loadResources);
+        } else {
+            loadResources();
+        }
+    </script>
+</body>
+</html>
+

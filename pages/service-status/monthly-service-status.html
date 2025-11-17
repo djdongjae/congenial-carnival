@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>서비스현황(월별)</title>
+    
+    <!-- CSS와 JS는 JavaScript에서 동적으로 로드됩니다 -->
+    
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+        }
+        
+        .filter-label {
+            font-size: 14px;
+            color: #666;
+            white-space: nowrap;
+        }
+        
+        .year-selector {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .year-nav-btn {
+            width: 30px;
+            height: 30px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: #666;
+        }
+        
+        .year-nav-btn:hover {
+            background-color: #f0f0f0;
+        }
+        
+        .year-display {
+            font-size: 16px;
+            font-weight: 600;
+            min-width: 60px;
+            text-align: center;
+        }
+        
+        .month-selector {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+        
+        .month-btn {
+            padding: 6px 12px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #666;
+            transition: all 0.2s;
+        }
+        
+        .month-btn:hover {
+            background-color: #f0f0f0;
+        }
+        
+        .month-btn.active {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+        
+        .radio-group {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .radio-option input[type="radio"] {
+            margin: 0;
+        }
+        
+        .excel-btn {
+            margin-left: auto;
+            padding: 8px 16px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .excel-btn:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" style="height: 100%; display: flex; flex-direction: column;">
+        <div class="content" style="display: flex; flex-direction: column; flex: 1; min-height: 0; padding: 20px; overflow: hidden;">
+            <!-- 필터 영역 -->
+            <div style="margin-bottom: 20px; display: flex; gap: 15px; align-items: center; flex-wrap: wrap; padding: 15px; background-color: #f8f9fa; border-radius: 8px; border: 1px solid #dee2e6;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span class="filter-label">조회년월</span>
+                    <div class="year-selector">
+                        <button class="year-nav-btn" id="prev-year">‹</button>
+                        <span class="year-display" id="current-year">2025</span>
+                        <button class="year-nav-btn" id="next-year">›</button>
+                    </div>
+                    <div class="month-selector" id="month-selector">
+                        <!-- 월 버튼들이 동적으로 생성됩니다 -->
+                    </div>
+                </div>
+                
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span class="filter-label">구분</span>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="category" value="plan" id="category-plan">
+                            <span>계획</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="category" value="performance" id="category-performance" checked>
+                            <span>실적</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <button class="excel-btn" id="excel-export">EXCEL</button>
+            </div>
+            
+            <!-- 메인 패널: 그리드 -->
+            <div class="main-panel" style="flex: 1; min-width: 0; background-color: #ffffff; border: 1px solid #dee2e6; border-radius: 8px; display: flex; flex-direction: column; overflow: hidden;">
+                <div class="panel-header" style="padding: 15px 20px; background: #f8f9fa !important; background-color: #f8f9fa !important; border-bottom: 1px solid #dee2e6;">
+                    <h3 style="font-size: 1.1rem; font-weight: 600; color: #333 !important; margin: 0;">○ 서비스현황(월별)</h3>
+                </div>
+                <div class="grid-container" style="flex: 1; min-height: 0; overflow: hidden; display: flex; flex-direction: column; padding: 15px;">
+                    <table id="ServiceStatusGrid"></table>
+                    <div id="ServiceStatusPager"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 동적 리소스 로딩 -->
+    <script>
+        // CSS와 JS 파일을 동적으로 로드하는 함수
+        function loadResources() {
+            const commonScript = document.createElement('script');
+            commonScript.src = '../../js/common.js?_t='+(new Date().toISOString().replace(/[-:T]/g, '').substring(0, 14));
+            commonScript.onload = async function() {
+                try {
+                    // 공통 리소스 로드
+                    const success = await loadCommonResources();
+                    if (success) {
+                        // Monthly Service Status 페이지 전용 스크립트 로드
+                        await loadJS('../../js/pages/service-status/monthly-service-status.js');
+                        
+                        // initPage 함수가 정의될 때까지 대기 후 초기화
+                        let attempts = 0;
+                        const maxAttempts = 50; // 5초 대기
+                        const checkInitPage = setInterval(() => {
+                            attempts++;
+                            if (typeof initPage === 'function') {
+                                clearInterval(checkInitPage);
+                                initPage();
+                            } else if (attempts >= maxAttempts) {
+                                clearInterval(checkInitPage);
+                                console.error('initPage 함수를 찾을 수 없습니다');
+                            }
+                        }, 100);
+                    }
+                } catch (error) {
+                    console.error('리소스 로드 중 오류 발생:', error);
+                }
+            };
+            commonScript.onerror = function() {
+                console.error('common.js 로드 실패');
+            };
+            document.head.appendChild(commonScript);
+        }
+        
+        // DOM 로드 완료 후 리소스 로드
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', loadResources);
+        } else {
+            loadResources();
+        }
+    </script>
+</body>
+</html>
+

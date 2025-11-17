@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>직원등록</title>
+    
+    <!-- CSS와 JS는 JavaScript에서 동적으로 로드됩니다 -->
+    
+</head>
+<body>
+    <div class="container">
+        <div class="content">  
+            
+               <!-- 그리드 컨테이너 -->
+               <div class="grid-container">
+                <table id="MainGrid"></table>
+                <div id="MainPager"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 동적 리소스 로딩 -->
+    <script>
+        // CSS와 JS 파일을 동적으로 로드하는 함수
+        function loadResources() {
+            const commonScript = document.createElement('script');
+            commonScript.src = '../../js/common.js?_t='+(new Date().toISOString().replace(/[-:T]/g, '').substring(0, 14));
+            commonScript.onload = async function() {
+                try {
+                    // 공통 리소스 로드
+                    const success = await loadCommonResources();
+                    if (success) {
+                        // 공통 그리드 스크립트 로드
+                        await loadJS('../../js/commonGrid.js');
+                        // Employee 페이지 전용 스크립트 로드
+                        await loadJS('../../js/pages/employee/employee.js');
+                        
+                        // initMainGrid 함수가 정의될 때까지 대기 후 초기화
+                        let attempts = 0;
+                        const maxAttempts = 50; // 5초 대기
+                        const checkInitMainGrid = setInterval(() => {
+                            attempts++;
+                            if (typeof initMainGrid === 'function') {
+                                clearInterval(checkInitMainGrid);
+                                initMainGrid();
+                            } else if (attempts >= maxAttempts) {
+                                clearInterval(checkInitMainGrid);
+                                console.error('initMainGrid 함수를 찾을 수 없습니다');
+                            }
+                        }, 100);
+                    }
+                } catch (error) {
+                    console.error('리소스 로드 중 오류 발생:', error);
+                }
+            };
+            commonScript.onerror = function() {
+                console.error('common.js 로드 실패');
+            };
+            document.head.appendChild(commonScript);
+        }
+        
+        // DOM 로드 완료 후 리소스 로드
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', loadResources);
+        } else {
+            loadResources();
+        }
+    </script>
+</body>
+</html>

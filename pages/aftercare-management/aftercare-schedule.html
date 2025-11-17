@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>사후관리 일정등록</title>
+    
+    <!-- CSS와 JS는 JavaScript에서 동적으로 로드됩니다 -->
+    
+</head>
+<body>
+    <div class="container" style="height: 100%; display: flex; flex-direction: column;">
+        <div class="content" style="display: flex; flex-direction: row; flex: 1; min-height: 0; padding: 20px; gap: 20px; overflow: hidden;">
+            <!-- 왼쪽 패널: 입력 및 선택 영역 -->
+            <div class="left-panel" style="width: 400px; min-width: 400px; max-width: 400px; background-color: #ffffff; border: 1px solid #dee2e6; border-radius: 8px; display: flex; flex-direction: column; overflow: hidden; flex-shrink: 0;">
+                <!-- 사후관리 일정등록 섹션 -->
+                <div class="section" style="border-bottom: 1px solid #dee2e6;">
+                    <div class="panel-header" style="padding: 15px 20px; background: #f8f9fa !important; background-color: #f8f9fa !important; border-bottom: 1px solid #dee2e6;">
+                        <h3 style="font-size: 1.1rem; font-weight: 600; color: #333 !important; margin: 0;">사후관리 일정등록</h3>
+                    </div>
+                    <div style="padding: 15px;">
+                    <!-- 생활지원사 -->
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-size: 14px; color: #333; font-weight: 500;">생활지원사</label>
+                        <input type="text" id="workerName" value="김영희" readonly style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; background-color: #f8f9fa;">
+                    </div>
+                    
+                    <!-- 달력 -->
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-size: 14px; color: #333; font-weight: 500;">날짜 선택</label>
+                        <input type="text" id="calendarWidget" readonly style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; background-color: #fff; cursor: pointer; font-size: 14px; text-align: center;">
+                    </div>
+                    </div>
+                </div>
+                
+                <!-- 정등록 섹션 -->
+                <div class="section" style="border-bottom: 1px solid #dee2e6;">
+                    <div class="panel-header" style="padding: 15px 20px; background: #f8f9fa !important; background-color: #f8f9fa !important; border-bottom: 1px solid #dee2e6;">
+                        <h3 style="font-size: 1.1rem; font-weight: 600; color: #333 !important; margin: 0;">일정등록</h3>
+                    </div>
+                    <div style="padding: 15px;">
+                    <!-- 제공서비스 -->
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-size: 14px; color: #333; font-weight: 500;">제공서비스</label>
+                        <div style="display: flex; gap: 5px;">
+                            <input type="text" id="serviceName" placeholder="서비스 검색" style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                            <button id="btnSearchService" class="btn btn-primary" style="padding: 8px 15px; white-space: nowrap;">찾기</button>
+                        </div>
+                    </div>
+                    
+                    <!-- 자원 -->
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-size: 14px; color: #333; font-weight: 500;">자원</label>
+                        <div style="position: relative;">
+                            <input type="text" id="resourceName" placeholder="자원 선택" style="width: 100%; padding: 8px; padding-right: 30px; border: 1px solid #ddd; border-radius: 4px;">
+                            <span style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); pointer-events: none;">▼</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 시간 -->
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-size: 14px; color: #333; font-weight: 500;">시간</label>
+                        <div style="display: flex; align-items: center; gap: 5px;">
+                            <input type="time" id="startTime" value="10:00" style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                            <span>-</span>
+                            <input type="time" id="endTime" value="10:05" style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                        </div>
+                    </div>
+                    </div>
+                </div>
+                
+                <!-- 대상자 섹션 -->
+                <div class="section" style="flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden;">
+                    <div class="panel-header" style="padding: 15px 20px; background: #f8f9fa !important; background-color: #f8f9fa !important; border-bottom: 1px solid #dee2e6;">
+                        <h3 style="font-size: 1.1rem; font-weight: 600; color: #333 !important; margin: 0;">대상자</h3>
+                    </div>
+                    <div style="flex: 1; min-height: 0; display: flex; flex-direction: column; padding: 15px; overflow: hidden;">
+                    <div class="grid-container" style="flex: 1; min-height: 0; overflow: hidden; display: flex; flex-direction: column;">
+                        <table id="BeneficiaryGrid"></table>
+                    </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 오른쪽 패널: 주간 서비스 그리드 -->
+            <div class="right-panel" style="flex: 1; min-width: 0; background-color: #ffffff; border: 1px solid #dee2e6; border-radius: 8px; display: flex; flex-direction: column; overflow: hidden;">
+                <!-- 헤더: 월 표시 및 버튼들 -->
+                <div class="panel-header" style="padding: 15px 20px; background-color: #f8f9fa; border-bottom: 1px solid #dee2e6; display: flex; justify-content: space-between; align-items: center;">
+                    <h2 id="currentMonth" style="font-size: 1.3rem; font-weight: 600; color: #333; margin: 0;">2025.11</h2>
+                    <div style="display: flex; gap: 10px;">
+                        <button id="btnSave" class="btn btn-primary" style="padding: 8px 20px;">저장</button>
+                        <button id="btnPDF" class="btn btn-secondary" style="padding: 8px 20px;">PDF</button>
+                        <button id="btnEXCEL" class="btn btn-secondary" style="padding: 8px 20px;">EXCEL</button>
+                        <button id="btnDeleteDuplicates" class="btn btn-warning" style="padding: 8px 20px;">중복삭제</button>
+                        <button id="btnDeleteAll" class="btn btn-danger" style="padding: 8px 20px;">전체삭제</button>
+                    </div>
+                </div>
+                
+                <!-- 주간 서비스 그리드 -->
+                <div class="schedule-grid-container" style="flex: 1; min-height: 0; overflow: auto; padding: 15px; background-color: #fafafa;">
+                    <div id="scheduleGrid" style="width: 100%; background-color: #fff; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                        <!-- JavaScript에서 동적으로 생성됨 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 동적 리소스 로딩 -->
+    <script>
+        // CSS와 JS 파일을 동적으로 로드하는 함수
+        function loadResources() {
+            const commonScript = document.createElement('script');
+            commonScript.src = '../../js/common.js?_t='+(new Date().toISOString().replace(/[-:T]/g, '').substring(0, 14));
+            commonScript.onload = async function() {
+                try {
+                    // 공통 리소스 로드
+                    const success = await loadCommonResources();
+                    if (success) {
+                        // 공통 그리드 스크립트 로드
+                        await loadJS('../../js/commonGrid.js');
+                        // 사후관리 일정등록 페이지 전용 스크립트 로드
+                        await loadJS('../../js/pages/aftercare-management/aftercare-schedule.js');
+                        
+                        // initAftercareSchedule 함수가 정의될 때까지 대기 후 초기화
+                        let attempts = 0;
+                        const maxAttempts = 50; // 5초 대기
+                        const checkInitAftercareSchedule = setInterval(() => {
+                            attempts++;
+                            if (typeof initAftercareSchedule === 'function') {
+                                clearInterval(checkInitAftercareSchedule);
+                                initAftercareSchedule();
+                            } else if (attempts >= maxAttempts) {
+                                clearInterval(checkInitAftercareSchedule);
+                                console.error('initAftercareSchedule 함수를 찾을 수 없습니다');
+                            }
+                        }, 100);
+                    }
+                } catch (error) {
+                    console.error('리소스 로드 중 오류 발생:', error);
+                }
+            };
+            commonScript.onerror = function() {
+                console.error('common.js 로드 실패');
+            };
+            document.head.appendChild(commonScript);
+        }
+        
+        // DOM 로드 완료 후 리소스 로드
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', loadResources);
+        } else {
+            loadResources();
+        }
+    </script>
+</body>
+</html>
+

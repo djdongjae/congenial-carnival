@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>생활지원사 배정</title>
+    
+    <!-- CSS와 JS는 JavaScript에서 동적으로 로드됩니다 -->
+    
+</head>
+<body>
+    <div class="container" style="height: 100%; display: flex; flex-direction: column;">
+        <div class="content" style="display: flex; flex-direction: column; flex: 1; min-height: 0; padding: 20px; overflow: hidden;">
+            <!-- 검색 및 액션 영역 -->
+            <div style="margin-bottom: 20px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; padding: 15px; background-color: #f8f9fa; border-radius: 8px; border: 1px solid #dee2e6;">
+                <input type="text" id="searchWorker" placeholder="지원사" style="padding: 8px; width: 150px; border: 1px solid #ddd; border-radius: 4px;">
+                <input type="text" id="searchBeneficiary" placeholder="대상자" style="padding: 8px; width: 150px; border: 1px solid #ddd; border-radius: 4px;">
+                <button id="btnSearch" class="btn btn-primary" style="padding: 8px 20px;">검색</button>
+                <button id="btnAllMap" class="btn btn-secondary" style="padding: 8px 20px;">대상자 전체 지도</button>
+                <button id="btnChangeWorker" class="btn btn-warning" style="padding: 8px 20px;">생활지원사 변경</button>
+            </div>
+            
+            <!-- 메인 컨테이너: 두 개의 그리드 나란히 배치 -->
+            <div class="main-layout" style="display: flex; flex-direction: row; gap: 20px; flex: 1; min-height: 0; align-items: flex-start;">
+                <!-- 왼쪽: 생활지원사 그리드 -->
+                <div class="left-panel" style="width: 400px; min-width: 400px; max-width: 400px; background-color: #ffffff; border: 1px solid #dee2e6; border-radius: 8px; display: flex; flex-direction: column; overflow: hidden; flex-shrink: 0;">
+                    <div class="panel-header" style="padding: 15px 20px; background-color: #f8f9fa; border-bottom: 1px solid #dee2e6;">
+                        <h3 style="font-size: 1.1rem; font-weight: 600; color: #333; margin: 0;">생활지원사</h3>
+                    </div>
+                    <div class="grid-container" style="flex: 1; min-height: 0; overflow: hidden; display: flex; flex-direction: column;">
+                        <table id="WorkerGrid"></table>
+                    </div>
+                </div>
+
+                <!-- 오른쪽: 대상자 그리드 -->
+                <div class="right-panel" style="flex: 1; min-width: 0; background-color: #ffffff; border: 1px solid #dee2e6; border-radius: 8px; display: flex; flex-direction: column; overflow: hidden;">
+                    <div class="panel-header" style="padding: 15px 20px; background-color: #f8f9fa; border-bottom: 1px solid #dee2e6; display: flex; justify-content: space-between; align-items: center;">
+                        <h3 style="font-size: 1.1rem; font-weight: 600; color: #333; margin: 0;">대상자</h3>
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <span id="totalBeneficiaries" style="font-size: 14px; color: #666;">등록 485명</span>
+                            <label style="display: flex; align-items: center; gap: 5px; font-size: 14px; color: #666; cursor: pointer;">
+                                <input type="checkbox" id="selectAll"> 전체선택
+                            </label>
+                        </div>
+                    </div>
+                    <div class="grid-container" style="flex: 1; min-height: 0; overflow: hidden; display: flex; flex-direction: column;">
+                        <table id="BeneficiaryGrid"></table>
+                        <div id="BeneficiaryPager"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 동적 리소스 로딩 -->
+    <script>
+        // CSS와 JS 파일을 동적으로 로드하는 함수
+        function loadResources() {
+            const commonScript = document.createElement('script');
+            commonScript.src = '../../js/common.js?_t='+(new Date().toISOString().replace(/[-:T]/g, '').substring(0, 14));
+            commonScript.onload = async function() {
+                try {
+                    // 공통 리소스 로드
+                    const success = await loadCommonResources();
+                    if (success) {
+                        // 생활지원사 배정 페이지 전용 스크립트 로드
+                        await loadJS('../../js/pages/beneficiary/support-worker-assignment.js');
+                        
+                        // initGrids 함수가 정의될 때까지 대기 후 초기화
+                        let attempts = 0;
+                        const maxAttempts = 50; // 5초 대기
+                        const checkInitGrids = setInterval(() => {
+                            attempts++;
+                            if (typeof initGrids === 'function') {
+                                clearInterval(checkInitGrids);
+                                initGrids();
+                            } else if (attempts >= maxAttempts) {
+                                clearInterval(checkInitGrids);
+                                console.error('initGrids 함수를 찾을 수 없습니다');
+                            }
+                        }, 100);
+                    }
+                } catch (error) {
+                    console.error('리소스 로드 중 오류 발생:', error);
+                }
+            };
+            commonScript.onerror = function() {
+                console.error('common.js 로드 실패');
+            };
+            document.head.appendChild(commonScript);
+        }
+        
+        // DOM 로드 완료 후 리소스 로드
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', loadResources);
+        } else {
+            loadResources();
+        }
+    </script>
+</body>
+</html>

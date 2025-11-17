@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>학습현황</title>
+    
+    <!-- CSS와 JS는 JavaScript에서 동적으로 로드됩니다 -->
+    
+</head>
+<body>
+    <div class="container">
+        <div class="content">
+            <!-- 헤더 섹션 -->
+            <div class="page-header">
+                <h1><i class="fas fa-chart-bar"></i> 학습현황</h1>
+                <p>학습자의 학습 진행 상황과 통계를 조회합니다</p>
+            </div>
+
+            <!-- 통계 카드 섹션 -->
+            <div class="stats-section">
+                <div class="stat-card stat-primary">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="total-learners">0</h3>
+                        <p>전체 학습자</p>
+                    </div>
+                </div>
+                <div class="stat-card stat-success">
+                    <div class="stat-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="active-learners">0</h3>
+                        <p>활성 학습자</p>
+                    </div>
+                </div>
+                <div class="stat-card stat-warning">
+                    <div class="stat-icon">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="total-completed">0</h3>
+                        <p>완료한 학습</p>
+                    </div>
+                </div>
+                <div class="stat-card stat-info">
+                    <div class="stat-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="avg-learning-time">0</h3>
+                        <p>평균 학습시간 (분)</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 검색 및 필터 섹션 -->
+            <div class="search-section">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="search-input" placeholder="학습자명으로 검색..." />
+                    <button class="btn-search" onclick="searchLearners()">
+                        <i class="fas fa-search"></i> 검색
+                    </button>
+                    <button class="btn-reset" onclick="resetSearch()">
+                        <i class="fas fa-redo"></i> 초기화
+                    </button>
+                </div>
+                <div class="filter-section">
+                    <select id="status-filter" class="filter-select" onchange="filterLearners()">
+                        <option value="">전체 상태</option>
+                        <option value="active">활성</option>
+                        <option value="inactive">비활성</option>
+                    </select>
+                    <select id="completion-filter" class="filter-select" onchange="filterLearners()">
+                        <option value="">전체</option>
+                        <option value="high">완료율 높음 (80% 이상)</option>
+                        <option value="medium">완료율 보통 (50-80%)</option>
+                        <option value="low">완료율 낮음 (50% 미만)</option>
+                    </select>
+                    <input type="month" id="date-filter" class="filter-select" onchange="filterLearners()" />
+                </div>
+            </div>
+
+            <!-- 액션 버튼 섹션 -->
+            <div class="action-section">
+                <button class="btn-action btn-success" onclick="exportReport()">
+                    <i class="fas fa-file-excel"></i> 보고서 내보내기
+                </button>
+                <button class="btn-action btn-info" onclick="refreshStatus()">
+                    <i class="fas fa-sync-alt"></i> 새로고침
+                </button>
+            </div>
+
+            <!-- 학습자 현황 목록 섹션 -->
+            <div class="learners-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-list"></i> 학습자 현황</h2>
+                    <span class="result-count" id="result-count">총 0명</span>
+                </div>
+                <div class="learners-list" id="learners-list">
+                    <!-- 동적으로 로드되는 학습자 목록 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 학습 상세 정보 모달 -->
+    <div class="modal" id="detail-modal" style="display: none;">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h3 id="detail-title">학습 상세 정보</h3>
+                <button class="modal-close" onclick="closeDetailModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="detail-content">
+                    <!-- 동적으로 로드되는 상세 정보 -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal btn-secondary" onclick="closeDetailModal()">닫기</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 동적 리소스 로딩 -->
+    <script>
+        function loadResources() {
+            const commonScript = document.createElement('script');
+            commonScript.src = '../../js/common.js?_t='+(new Date().toISOString().replace(/[-:T]/g, '').substring(0, 14));
+            commonScript.onload = async function() {
+                try {
+                    const success = await loadCommonResources();
+                    if (success) {
+                        await loadJS('../../js/pages/educational-material/learning-status.js');
+                    }
+                } catch (error) {
+                    console.error('리소스 로드 중 오류 발생:', error);
+                }
+            };
+            commonScript.onerror = function() {
+                console.error('common.js 로드 실패');
+            };
+            document.head.appendChild(commonScript);
+        }
+        
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', loadResources);
+        } else {
+            loadResources();
+        }
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>지원사별 실적등록</title>
+    
+    <!-- CSS와 JS는 JavaScript에서 동적으로 로드됩니다 -->
+    
+</head>
+<body>
+    <div class="container" style="padding: 20px;">
+        <div class="content">
+            <!-- 상단 헤더 -->
+            <div style="margin-bottom: 20px; border-bottom: 2px solid #007bff; padding-bottom: 10px;">
+                <h2 style="margin: 0; font-size: 18px; font-weight: bold;">계획관리 > 지원사별 실적등록</h2>
+                <div style="margin-top: 5px; display: flex; align-items: center; gap: 15px;">
+                    <span style="font-size: 14px; color: #666;">생활지원사 일정등록</span>
+                    <span id="currentDate" style="font-size: 14px; font-weight: bold;">2025.08</span>
+                    <span id="summaryInfo" style="font-size: 14px; color: #666;">총 계획 <span id="totalPlan">0</span> 총 실적 <span id="totalActual">0</span></span>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 20px; height: calc(100vh - 200px);">
+                <!-- 왼쪽: 생활지원사 및 대상자 목록 -->
+                <div style="flex: 1; display: flex; flex-direction: row; gap: 15px;">
+                    <!-- 생활지원사 그리드 -->
+                    <div style="width: 120px; min-width: 120px; border: 1px solid #ddd; border-radius: 5px; padding: 15px; overflow-y: auto; display: flex; flex-direction: column;">
+                        <h3 style="margin-top: 0; margin-bottom: 15px; font-size: 16px;">생활지원사</h3>
+                        <div style="flex: 1; overflow: hidden;">
+                            <table id="WorkerGrid" style="width: 100%;"></table>
+                        </div>
+                        <div id="WorkerPager"></div>
+                    </div>
+                    
+                    <!-- 대상자 그리드 -->
+                    <div style="flex: 1; border: 1px solid #ddd; border-radius: 5px; padding: 15px; overflow-y: auto; display: flex; flex-direction: column;">
+                        <h3 style="margin-top: 0; margin-bottom: 15px; font-size: 16px;">대상자 목록</h3>
+                        <div style="flex: 1; overflow: hidden;">
+                            <table id="BeneficiaryGrid" style="width: 100%;"></table>
+                        </div>
+                        <div id="BeneficiaryPager"></div>
+                    </div>
+                </div>
+
+                <!-- 오른쪽: 실적등록 상세 -->
+                <div style="flex: 2; border: 1px solid #ddd; border-radius: 5px; padding: 15px; overflow-y: auto;">
+                    <!-- 대상자 정보 -->
+                    <div id="beneficiaryInfo" style="margin-bottom: 20px; padding: 15px; background: #f9f9f9; border-radius: 5px;">
+                        <div style="font-size: 16px; font-weight: bold; margin-bottom: 5px;" id="beneficiaryName"></div>
+                        <div style="font-size: 14px; color: #666;" id="beneficiaryAddress"></div>
+                    </div>
+
+                    <!-- 서비스 계획/실적 비교 그리드 -->
+                    <div style="margin-bottom: 20px;">
+                        <h4 style="margin-bottom: 10px; font-size: 14px;">제공서비스</h4>
+                        <table id="ServiceComparisonGrid" style="width: 100%;"></table>
+                        <div id="ServiceComparisonPager"></div>
+                    </div>
+
+                    <!-- 메모관리 그리드 -->
+                    <div style="margin-bottom: 20px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <h4 style="margin: 0; font-size: 14px;">메모관리</h4>
+                            <button id="addMemoBtn" style="padding: 5px 15px; cursor: pointer; background: #007bff; color: white; border: none; border-radius: 3px; font-size: 12px;">메모 추가</button>
+                        </div>
+                        <table id="MemoGrid" style="width: 100%;"></table>
+                        <div id="MemoPager"></div>
+                    </div>
+
+                    <!-- 상세 실적등록 그리드 -->
+                    <div>
+                        <h4 style="margin-bottom: 10px; font-size: 14px;">상세 실적등록</h4>
+                        <table id="PerformanceDetailGrid" style="width: 100%;"></table>
+                        <div id="PerformanceDetailPager"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 메모 등록/수정 모달 -->
+    <div id="memoModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000;">
+        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 30px; border-radius: 8px; width: 600px; max-width: 90%; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #eee; padding-bottom: 15px;">
+                <h2 style="margin: 0; font-size: 20px; font-weight: bold;">메모</h2>
+                <button id="closeMemoModal" style="cursor: pointer; background: none; border: none; font-size: 24px; color: #666; padding: 0; width: 30px; height: 30px; line-height: 30px;">×</button>
+            </div>
+            <div style="margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #eee;">
+                <label style="display: block; font-weight: bold; margin-bottom: 8px; color: #333;">작성자</label>
+                <div id="memoAuthor" style="padding: 8px; background: #f9f9f9; border-radius: 4px;"></div>
+            </div>
+            <div style="margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #eee;">
+                <label style="display: block; font-weight: bold; margin-bottom: 8px; color: #333;">대상자</label>
+                <div id="memoBeneficiary" style="padding: 8px; background: #f9f9f9; border-radius: 4px; line-height: 1.6;"></div>
+            </div>
+            <div style="margin-bottom: 25px;">
+                <label style="display: block; font-weight: bold; margin-bottom: 8px; color: #333;">메모내용</label>
+                <textarea id="memoContent" style="width: 100%; height: 200px; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; resize: vertical; font-family: inherit;"></textarea>
+            </div>
+            <div style="text-align: center;">
+                <button id="saveMemoBtn" style="padding: 10px 30px; cursor: pointer; background: #007bff; color: white; border: none; border-radius: 4px; font-size: 14px; font-weight: bold;">저장</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 업무일지 모달 -->
+    <div id="workJournalModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10001;">
+        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 30px; border-radius: 8px; width: 800px; max-width: 90%; max-height: 90vh; overflow-y: auto; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #eee; padding-bottom: 15px;">
+                <h2 style="margin: 0; font-size: 20px; font-weight: bold;">업무일지</h2>
+                <button id="closeWorkJournalModal" style="cursor: pointer; background: none; border: none; font-size: 24px; color: #666; padding: 0; width: 30px; height: 30px; line-height: 30px;">×</button>
+            </div>
+            <div id="workJournalContent">
+                <!-- 업무일지 내용이 동적으로 로드됨 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 동적 리소스 로딩 -->
+    <script>
+        // CSS와 JS 파일을 동적으로 로드하는 함수
+        function loadResources() {
+            const commonScript = document.createElement('script');
+            commonScript.src = '../../js/common.js?_t='+(new Date().toISOString().replace(/[-:T]/g, '').substring(0, 14));
+            commonScript.onload = async function() {
+                try {
+                    // 공통 리소스 로드
+                    const success = await loadCommonResources();
+                    if (success) {
+                        // 공통 그리드 스크립트 로드
+                        await loadJS('../../js/commonGrid.js');
+                        // Performance Registration 페이지 전용 스크립트 로드
+                        await loadJS('../../js/pages/plan-performance/performance-registration.js');
+                        
+                        // initMainGrid 함수가 정의될 때까지 대기 후 초기화
+                        let attempts = 0;
+                        const maxAttempts = 50; // 5초 대기
+                        const checkInitMainGrid = setInterval(() => {
+                            attempts++;
+                            if (typeof initPerformanceRegistration === 'function') {
+                                clearInterval(checkInitMainGrid);
+                                initPerformanceRegistration();
+                            } else if (attempts >= maxAttempts) {
+                                clearInterval(checkInitMainGrid);
+                                console.error('initPerformanceRegistration 함수를 찾을 수 없습니다');
+                            }
+                        }, 100);
+                    }
+                } catch (error) {
+                    console.error('리소스 로드 중 오류 발생:', error);
+                }
+            };
+            commonScript.onerror = function() {
+                console.error('common.js 로드 실패');
+            };
+            document.head.appendChild(commonScript);
+        }
+        
+        // DOM 로드 완료 후 리소스 로드
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', loadResources);
+        } else {
+            loadResources();
+        }
+    </script>
+</body>
+</html>
+

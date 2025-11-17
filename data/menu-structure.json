@@ -1,0 +1,300 @@
+{
+  "menus": [
+    {
+      "id": "test-menu",
+      "title": "테스트",
+      "icon": "🧪",
+      "page": "pages/test.html?abc=ddd",
+      "permissions": ["admin", "manager", "user"],
+      "children": []
+    },
+    {
+      "id": "sample-grid",
+      "title": "sample 그리드",
+      "icon": "📊",
+      "page": "pages/grid.html",
+      "permissions": ["admin", "manager", "user"],
+      "children": []
+    },
+    {
+      "id": "custom-care",
+      "title": "맞춤케어",
+      "icon": "🏠",
+      "page": "pages/custom-care.html",
+      "permissions": ["admin", "manager", "user"],
+      "children": []
+    },
+    {
+      "id": "institution-management",
+      "title": "기관관리",
+      "icon": "🏢",
+      "page": "pages/institution-management.html",
+      "permissions": ["admin", "manager"],
+      "children": []
+    },
+    {
+      "id": "employee-management",
+      "title": "직원관리",
+      "icon": "👤",
+      "page": "pages/employee-management.html",
+      "permissions": ["admin", "manager"],
+      "children": [
+        {
+          "id": "employee-registration",
+          "title": "직원관리",
+          "icon": "📝",
+          "page": "pages/employee/employee.html",
+          "permissions": ["admin", "manager"]
+        },
+        {
+          "id": "life-support-worker",
+          "title": "생활지원사 등록/설정",
+          "icon": "👨‍⚕️",
+          "page": "pages/employee/life-support-worker.html",
+          "permissions": ["admin", "manager"]
+        }
+      ]
+    },
+    {
+      "id": "service-management",
+      "title": "서비스관리",
+      "icon": "🛠️",
+      "page": "pages/service-management.html",
+      "permissions": ["admin", "manager", "user"],
+      "children": []
+    },
+    {
+      "id": "resource-management",
+      "title": "자원관리",
+      "icon": "📦",
+      "page": "pages/resource-management.html",
+      "permissions": ["admin", "manager"],
+      "children": []
+    },
+    {
+      "id": "beneficiary-management",
+      "title": "대상자관리",
+      "icon": "👥",
+      "page": "pages/beneficiary-management.html",
+      "permissions": ["admin", "manager", "user"],
+      "children": [
+        {
+          "id": "beneficiary-registration",
+          "title": "대상자등록",
+          "icon": "📝",
+          "page": "pages/benficiary/beneficiary-registration.html",
+          "permissions": ["admin", "manager"]
+        },
+        {
+          "id": "support-worker-assignment",
+          "title": "생활지원사 배정",
+          "icon": "🎯",
+          "page": "pages/benficiary/support-worker-assignment.html",
+          "permissions": ["admin", "manager"]
+        }
+      ]
+    },
+    {
+      "id": "plan-performance",
+      "title": "계획/실적관리",
+      "icon": "📊",
+      "page": "pages/plan-performance.html",
+      "permissions": ["admin", "manager"],
+      "children": [
+        {
+          "id": "plan-performance-schedule",
+          "title": "계획/실적관리",
+          "icon": "📝",
+          "page": "pages/plan-performance/plan-performance-schedule.html",
+          "permissions": ["admin", "manager"]
+        },
+        {
+          "id": "support-worker-schedule",
+          "title": "지원사별 일정등록",
+          "icon": "📅",
+          "page": "pages/plan-performance/support-worker-schedule.html",
+          "permissions": ["admin", "manager"]
+        },
+        {
+          "id": "performance-registration",
+          "title": "실적등록",
+          "icon": "📈",
+          "page": "pages/plan-performance/performance-registration.html",
+          "permissions": ["admin", "manager"]
+        },
+        {
+          "id": "support-worker-location",
+          "title": "지원사 위치조회",
+          "icon": "📍",
+          "page": "pages/plan-performance/support-worker-location.html",
+          "permissions": ["admin", "manager"]
+        },
+        {
+          "id": "support-worker-monitoring",
+          "title": "지원사 모니터링",
+          "icon": "📱",
+          "page": "pages/plan-performance/support-worker-monitoring.html",
+          "permissions": ["admin", "manager"]
+        }
+      ]
+    },
+    {
+      "id": "group-program",
+      "title": "단체프로그램",
+      "icon": "👥",
+      "page": "pages/group-program.html",
+      "permissions": ["admin", "manager"],
+      "children": [
+        {
+          "id": "group-schedule",
+          "title": "일정등록",
+          "icon": "📅",
+          "page": "pages/group-program/group-schedule.html",
+          "permissions": ["admin", "manager"]
+        },
+        {
+          "id": "group-performance",
+          "title": "실적등록",
+          "icon": "📊",
+          "page": "pages/group-program/group-performance.html",
+          "permissions": ["admin", "manager"]
+        }
+      ]
+    },
+    {
+      "id": "service-status",
+      "title": "서비스현황",
+      "icon": "📈",
+      "page": "pages/service-status.html",
+      "permissions": ["admin", "manager", "user"],
+      "children": [
+        {
+          "id": "monthly-work-status",
+          "title": "지원사별 월근무현황",
+          "icon": "📅",
+          "page": "pages/service-status/monthly-work-status.html",
+          "permissions": ["admin", "manager", "user"]
+        },
+        {
+          "id": "monthly-service-status",
+          "title": "월별 서비스현황",
+          "icon": "👨‍⚕️",
+          "page": "pages/service-status/monthly-service-status.html",
+          "permissions": ["admin", "manager", "user"]
+        },
+        {
+          "id": "beneficiary-service-status",
+          "title": "대상자별 서비스현황",
+          "icon": "👥",
+          "page": "pages/service-status/beneficiary-service-status.html",
+          "permissions": ["admin", "manager", "user"]
+        },
+        {
+          "id": "group-program-status",
+          "title": "단체프로그램 서비스현황",
+          "icon": "👥",
+          "page": "pages/service-status/group-program-status.html",
+          "permissions": ["admin", "manager", "user"]
+        }
+      ]
+    },
+    {
+      "id": "aftercare-management",
+      "title": "사후관리",
+      "icon": "🔄",
+      "page": "pages/aftercare-management.html",
+      "permissions": ["admin", "manager"],
+      "children": [
+        {
+          "id": "aftercare-schedule",
+          "title": "일정등록",
+          "icon": "📅",
+          "page": "pages/aftercare-management/aftercare-schedule.html",
+          "permissions": ["admin", "manager"]
+        },
+        {
+          "id": "aftercare-performance",
+          "title": "실적등록",
+          "icon": "📊",
+          "page": "pages/aftercare-management/aftercare-performance.html",
+          "permissions": ["admin", "manager"]
+        },
+        {
+          "id": "work-log-ledger",
+          "title": "업무일지 대장",
+          "icon": "📋",
+          "page": "pages/aftercare-management/work-log-ledger.html",
+          "permissions": ["admin", "manager"]
+        }
+      ]
+    },
+    {
+      "id": "post-management",
+      "title": "게시글관리",
+      "icon": "📝",
+      "page": "pages/post-management.html",
+      "permissions": ["admin", "manager"],
+      "children": [
+        {
+          "id": "announcements",
+          "title": "공지사항",
+          "icon": "📢",
+          "page": "pages/post-management/announcements.html",
+          "permissions": ["admin", "manager"]
+        },
+        {
+          "id": "notice-board",
+          "title": "알림장",
+          "icon": "📋",
+          "page": "pages/post-management/notice-board.html",
+          "permissions": ["admin", "manager"]
+        },
+        {
+          "id": "album",
+          "title": "앨범",
+          "icon": "🖼️",
+          "page": "pages/post-management/album.html",
+          "permissions": ["admin", "manager"]
+        },
+        {
+          "id": "meal-plan",
+          "title": "식단표",
+          "icon": "🍽️",
+          "page": "pages/post-management/meal-plan.html",
+          "permissions": ["admin", "manager"]
+        }
+      ]
+    },
+    {
+      "id": "educational-material",
+      "title": "교육자료관리",
+      "icon": "📚",
+      "page": "pages/educational-material.html",
+      "permissions": ["admin", "manager"],
+      "children": [
+        {
+          "id": "life-education",
+          "title": "생활교육",
+          "icon": "📖",
+          "page": "pages/educational-material/life-education.html",
+          "permissions": ["admin", "manager"]
+        },
+        {
+          "id": "todays-video",
+          "title": "오늘영상",
+          "icon": "🎥",
+          "page": "pages/educational-material/todays-video.html",
+          "permissions": ["admin", "manager"]
+        },
+        {
+          "id": "learning-status",
+          "title": "학습현황",
+          "icon": "📊",
+          "page": "pages/educational-material/learning-status.html",
+          "permissions": ["admin", "manager"]
+        }
+      ]
+    }
+   
+  ]
+}

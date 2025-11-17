@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>자원 관리</title>
+    
+    <!-- CSS와 JS는 JavaScript에서 동적으로 로드됩니다 -->
+    
+</head>
+<body>
+    <div class="container">
+        <div class="content">  
+            
+               <!-- 그리드 컨테이너 -->
+               <div class="grid-container">
+                <table id="MainGrid"></table>
+                <div id="MainPager"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 자원관리 및 서비스 내역 팝업 모달 -->
+    <div id="resourceDetailModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; overflow: auto;">
+        <div style="position: relative; background: white; margin: 30px auto; padding: 0; border-radius: 8px; width: 90%; max-width: 1200px; max-height: 90vh; overflow: hidden; display: flex; flex-direction: column;">
+            <!-- 헤더 -->
+            <div style="padding: 20px; background: #f8f9fa; border-bottom: 1px solid #dee2e6; display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="margin: 0; font-size: 1.2rem; font-weight: 600;">자원관리 및 서비스 내역</h3>
+                <button id="closeResourceDetailModal" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #666; padding: 0; width: 30px; height: 30px; line-height: 30px;">&times;</button>
+            </div>
+            
+            <!-- 컨텐츠 -->
+            <div style="padding: 20px; flex: 1; overflow-y: auto;">
+                <!-- 입력 폼 -->
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 20px;">
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600;">거래처명 <span style="color: red;">*</span></label>
+                        <input type="text" id="clientName" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;" />
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600;">사업자번호</label>
+                        <input type="text" id="businessNumber" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;" />
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600;">대표자명 <span style="color: red;">*</span></label>
+                        <input type="text" id="representativeName" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;" />
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600;">업태</label>
+                        <input type="text" id="businessType" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;" />
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600;">업종</label>
+                        <input type="text" id="industry" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;" />
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600;">담당자 <span style="color: red;">*</span></label>
+                        <input type="text" id="contactPerson" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;" />
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600;">연락처 <span style="color: red;">*</span></label>
+                        <input type="text" id="contactNumber" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;" />
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600;">FAX</label>
+                        <input type="text" id="fax" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;" />
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600;">E-mail</label>
+                        <input type="email" id="email" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;" />
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600;">영역 <span style="color: red;">*</span></label>
+                        <select id="domain" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                            <option value="">선택하세요</option>
+                            <option value="기업">기업</option>
+                            <option value="공공">공공</option>
+                            <option value="기타">기타</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600;">분류</label>
+                        <select id="category" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                            <option value="">선택하세요</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600;">구분</label>
+                        <select id="type" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                            <option value="">선택하세요</option>
+                        </select>
+                    </div>
+                    <div style="grid-column: 1 / -1;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600;">주소 <span style="color: red;">*</span></label>
+                        <input type="text" id="address" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;" />
+                    </div>
+                </div>
+                
+                <!-- 서비스 연결 섹션 -->
+                <div style="margin-top: 30px; border-top: 2px solid #dee2e6; padding-top: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h4 style="margin: 0; font-size: 1.1rem; font-weight: 600;">서비스 연결</h4>
+                        <button id="openServiceConnectionBtn" style="padding: 8px 20px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px;">서비스연결</button>
+                    </div>
+                    
+                    <!-- 연결된 서비스 목록 -->
+                    <div style="overflow-x: auto;">
+                        <table id="ConnectedServiceGrid" style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr style="background: #f8f9fa; border-bottom: 2px solid #dee2e6;">
+                                    <th style="padding: 10px; text-align: center; border: 1px solid #dee2e6; width: 60px;">No</th>
+                                    <th style="padding: 10px; text-align: center; border: 1px solid #dee2e6; width: 200px;">서비스명</th>
+                                    <th style="padding: 10px; text-align: center; border: 1px solid #dee2e6; width: 120px;">시작일</th>
+                                    <th style="padding: 10px; text-align: center; border: 1px solid #dee2e6; width: 120px;">종료일</th>
+                                    <th style="padding: 10px; text-align: center; border: 1px solid #dee2e6; width: 100px;">관리</th>
+                                </tr>
+                            </thead>
+                            <tbody id="connectedServiceList">
+                                <!-- 동적으로 추가됨 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- 저장 버튼 -->
+                <div style="margin-top: 30px; text-align: right;">
+                    <button id="saveResourceBtn" style="padding: 10px 30px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 600;">저장</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 서비스 연결 팝업 모달 -->
+    <div id="serviceConnectionModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; overflow: auto;">
+        <div style="position: relative; background: white; margin: 50px auto; padding: 0; border-radius: 8px; width: 90%; max-width: 1000px; max-height: 90vh; overflow: hidden; display: flex; flex-direction: column;">
+            <!-- 헤더 -->
+            <div style="padding: 20px; background: #f8f9fa; border-bottom: 1px solid #dee2e6; display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="margin: 0; font-size: 1.2rem; font-weight: 600;">서비스 연결</h3>
+                <button id="closeServiceConnectionModal" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #666; padding: 0; width: 30px; height: 30px; line-height: 30px;">&times;</button>
+            </div>
+            
+            <!-- 컨텐츠 -->
+            <div style="padding: 20px; flex: 1; overflow-y: auto;">
+                <!-- 검색 영역 -->
+                <div style="margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                    <label style="font-weight: 600; min-width: 60px;">서비스:</label>
+                    <input type="text" id="serviceSearchInput" placeholder="서비스명을 입력하세요" style="flex: 1; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;" />
+                    <button id="serviceSearchBtn" style="padding: 8px 20px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px;">검색</button>
+                    <div id="selectedServiceName" style="padding: 8px 12px; background: #e9ecef; border-radius: 4px; min-width: 200px; text-align: center; font-weight: 500; display: none;"></div>
+                </div>
+                
+                <!-- 적용기간 -->
+                <div style="margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                    <label style="font-weight: 600; min-width: 60px;">적용기간:</label>
+                    <input type="text" id="serviceStartDate" placeholder="시작일" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; width: 150px;" />
+                    <span style="margin: 0 10px;">~</span>
+                    <input type="text" id="serviceEndDate" placeholder="종료일" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; width: 150px;" />
+                    <label style="display: flex; align-items: center; gap: 5px; margin-left: 20px; cursor: pointer;">
+                        <input type="checkbox" id="noEndDateCheck" style="cursor: pointer;" />
+                        <span style="font-size: 14px;">종료일 없음</span>
+                    </label>
+                    <button id="applyServiceBtn" style="padding: 8px 20px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; margin-left: auto;">적용</button>
+                </div>
+                
+                <!-- 검색 결과 -->
+                <div id="serviceSearchResult" style="margin-top: 20px;">
+                    <div id="serviceSearchCount" style="margin-bottom: 10px; color: #666; font-size: 14px;"></div>
+                    <div style="overflow-x: auto;">
+                        <table id="ServiceConnectionGrid"></table>
+                        <div id="ServiceConnectionPager"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 동적 리소스 로딩 -->
+    <script>
+        // CSS와 JS 파일을 동적으로 로드하는 함수
+        function loadResources() {
+            const commonScript = document.createElement('script');
+            commonScript.src = '../../js/common.js?_t='+(new Date().toISOString().replace(/[-:T]/g, '').substring(0, 14));
+            commonScript.onload = async function() {
+                try {
+                    // 공통 리소스 로드
+                    const success = await loadCommonResources();
+                    if (success) {
+                        // 공통 그리드 스크립트 로드
+                        await loadJS('../../js/commonGrid.js');
+                        // Resource Management 페이지 전용 스크립트 로드
+                        await loadJS('../../js/pages/resource-management.js');
+                        
+                        // initMainGrid 함수가 정의될 때까지 대기 후 초기화
+                        let attempts = 0;
+                        const maxAttempts = 50; // 5초 대기
+                        const checkInitMainGrid = setInterval(() => {
+                            attempts++;
+                            if (typeof initMainGrid === 'function') {
+                                clearInterval(checkInitMainGrid);
+                                initMainGrid();
+                            } else if (attempts >= maxAttempts) {
+                                clearInterval(checkInitMainGrid);
+                                console.error('initMainGrid 함수를 찾을 수 없습니다');
+                            }
+                        }, 100);
+                    }
+                } catch (error) {
+                    console.error('리소스 로드 중 오류 발생:', error);
+                }
+            };
+            commonScript.onerror = function() {
+                console.error('common.js 로드 실패');
+            };
+            document.head.appendChild(commonScript);
+        }
+        
+        // DOM 로드 완료 후 리소스 로드
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', loadResources);
+        } else {
+            loadResources();
+        }
+    </script>
+</body>
+</html>
+

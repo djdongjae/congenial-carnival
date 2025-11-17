@@ -1,0 +1,155 @@
+<queries>
+<Q010>
+SELECT 
+    e.employee_id AS no,
+    e.name AS name,
+   e.birthDate,
+    COALESCE(a.classification, '미지정') AS job,
+    COALESCE(a.position, '미지정') AS position,
+    DATE_FORMAT(em.join_date, '%Y-%m-%d') AS hireDate,
+    CASE 
+        WHEN em.rehire_same = 1 THEN '휴직'            -- 휴직(1)
+        WHEN em.rehire_same = 9 THEN '퇴사'            -- 퇴사(9)
+        WHEN em.leave_date IS NOT NULL THEN '퇴사'     -- 안전망: 퇴사일 존재 시 퇴사
+        WHEN em.leave_date IS NULL AND em.join_date IS NOT NULL THEN '재직'
+        ELSE '재직'
+    END AS status,
+    '-' AS supportCount,
+    COALESCE(e.mobile_phone, '') AS phone,
+    COALESCE(acc.user_id, '') AS account
+FROM 
+    employee e 
+LEFT JOIN affiliation a ON e.employee_id = a.employee_id
+LEFT JOIN employment em ON e.employee_id = em.employee_id
+LEFT JOIN account acc ON e.employee_id = acc.employee_id
+ORDER BY 
+    e.employee_id ASC
+LIMIT [1]
+OFFSET [2]
+</Q010>
+
+<Q020>
+SELECT 
+    e.no,
+    e.name,
+    DATE_FORMAT(e.birth_date, '%Y-%m-%d') as birthDate,
+    a.job,
+    a.position,
+    DATE_FORMAT(e.hire_date, '%Y-%m-%d') as hireDate,
+    CASE 
+        WHEN em.leave_date IS NULL THEN '재직' 
+        WHEN em.leave_date IS NOT NULL THEN '퇴사' 
+        ELSE '재직' 
+    END as status,
+    COALESCE(em.support_count, '-') as supportCount,
+    e.mobile_phone as phone,
+    a.account
+FROM employee e
+LEFT JOIN accounts a ON e.employee_id = a.employee_id
+LEFT JOIN employee_meta em ON e.employee_id = em.employee_id
+WHERE e.employee_id = [1]
+</Q020>
+
+<Q030>
+INSERT INTO employee (
+    name,
+    birthDate,
+    mobile_phone,
+    created_at,
+    updated_at
+) VALUES (
+    '[1]',
+    '[2]',
+    '[3]',
+    NOW(),
+    NOW()
+);
+SET @emp_id := LAST_INSERT_ID();
+INSERT INTO employment (
+    employee_id,
+    join_date,
+    rehire_same,
+    created_at,
+    updated_at
+) VALUES (
+    @emp_id,
+    '[4]',
+    '[5]',
+    NOW(),
+    NOW()
+);
+INSERT INTO affiliation (
+    employee_id,
+    classification,
+    position,
+    created_at,
+    updated_at
+) VALUES (
+    @emp_id,
+    '[6]',
+    '[7]',
+    NOW(),
+    NOW()
+);
+ 
+INSERT INTO account (
+    employee_id,
+    user_id,
+    created_at,
+    updated_at
+) VALUES (
+    @emp_id,
+    '[8]',
+    NOW(),
+    NOW()
+);
+</Q030>
+
+<Q040>
+UPDATE employee 
+SET 
+    name = '[1]',
+    birthDate = CASE 
+        WHEN '[2]' != '' AND '[2]' != '00000000000000' THEN '[2]'
+        ELSE birthDate 
+    END,
+    mobile_phone = '[3]',
+    updated_at = NOW()
+WHERE employee_id = [8];
+
+UPDATE employment 
+SET 
+    join_date = CASE WHEN '[4]' != '' THEN '[4]' ELSE join_date END,
+    leave_date = CASE 
+        WHEN '[5]' = '9' THEN COALESCE(leave_date, NOW())
+        WHEN '[5]' = '0' THEN NULL
+        ELSE leave_date 
+    END,
+    rehire_same = CASE 
+        WHEN '[5]' = '1' THEN 1 
+        WHEN '[5]' = '9' THEN 9 
+        ELSE 0 
+    END,
+    updated_at = NOW()
+WHERE employee_id = [8];
+
+UPDATE affiliation 
+SET 
+    classification = '[6]',
+    position = '[7]',
+    updated_at = NOW()
+WHERE employee_id = [8];
+UPDATE account 
+SET 
+    user_id = '[9]',
+    updated_at = NOW()
+WHERE employee_id = [8];
+</Q040>
+
+<Q050>
+DELETE FROM account WHERE employee_id IN ([1]);
+DELETE FROM affiliation WHERE employee_id IN ([1]);
+DELETE FROM employment WHERE employee_id IN ([1]);
+DELETE FROM employee WHERE employee_id IN ([1]);
+</Q050>
+</queries>

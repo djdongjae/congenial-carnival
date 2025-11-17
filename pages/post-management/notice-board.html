@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>알림장</title>
+    
+    <!-- CSS와 JS는 JavaScript에서 동적으로 로드됩니다 -->
+    
+</head>
+<body>
+    <div class="container">
+        <div class="content">
+            <!-- 헤더 섹션 -->
+            <div class="page-header">
+                <h1><i class="fas fa-clipboard"></i> 알림장</h1>
+                <p>대상자 및 가족에게 전달할 알림을 작성하고 관리합니다</p>
+            </div>
+
+            <!-- 통계 카드 섹션 -->
+            <div class="stats-section">
+                <div class="stat-card stat-primary">
+                    <div class="stat-icon">
+                        <i class="fas fa-sticky-note"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="total-notices">0</h3>
+                        <p>전체 알림</p>
+                    </div>
+                </div>
+                <div class="stat-card stat-success">
+                    <div class="stat-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="read-notices">0</h3>
+                        <p>읽음 확인</p>
+                    </div>
+                </div>
+                <div class="stat-card stat-warning">
+                    <div class="stat-icon">
+                        <i class="fas fa-calendar-day"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="today-notices">0</h3>
+                        <p>오늘 작성</p>
+                    </div>
+                </div>
+                <div class="stat-card stat-info">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="target-count">0</h3>
+                        <p>전달 대상자</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 검색 및 필터 섹션 -->
+            <div class="search-section">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="search-input" placeholder="제목, 내용으로 검색..." />
+                    <button class="btn-search" onclick="searchNotices()">
+                        <i class="fas fa-search"></i> 검색
+                    </button>
+                    <button class="btn-reset" onclick="resetSearch()">
+                        <i class="fas fa-redo"></i> 초기화
+                    </button>
+                </div>
+                <div class="filter-section">
+                    <select id="status-filter" class="filter-select" onchange="filterNotices()">
+                        <option value="">전체 상태</option>
+                        <option value="draft">임시저장</option>
+                        <option value="sent">발송완료</option>
+                    </select>
+                    <select id="read-filter" class="filter-select" onchange="filterNotices()">
+                        <option value="">읽음 상태</option>
+                        <option value="read">읽음</option>
+                        <option value="unread">안읽음</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- 액션 버튼 섹션 -->
+            <div class="action-section">
+                <button class="btn-action btn-primary" onclick="addNotice()">
+                    <i class="fas fa-plus"></i> 알림 작성
+                </button>
+                <button class="btn-action btn-info" onclick="refreshNotices()">
+                    <i class="fas fa-sync-alt"></i> 새로고침
+                </button>
+            </div>
+
+            <!-- 알림장 목록 섹션 -->
+            <div class="notices-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-list"></i> 알림장 목록</h2>
+                    <span class="result-count" id="result-count">총 0개</span>
+                </div>
+                <div class="notices-list" id="notices-list">
+                    <!-- 동적으로 로드되는 알림장 목록 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 알림장 등록/수정 모달 -->
+    <div class="modal" id="notice-modal" style="display: none;">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h3 id="modal-title">알림장 작성</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="notice-form">
+                    <div class="form-group">
+                        <label>수신 대상 <span class="required">*</span></label>
+                        <select id="notice-target" multiple required style="min-height: 100px;">
+                            <option value="all">전체 대상자</option>
+                            <option value="individual">개별 선택</option>
+                        </select>
+                        <small>Ctrl(또는 Cmd) 키를 누른 채로 여러 항목을 선택할 수 있습니다.</small>
+                    </div>
+                    <div class="form-group">
+                        <label>제목 <span class="required">*</span></label>
+                        <input type="text" id="notice-title" required />
+                    </div>
+                    <div class="form-group">
+                        <label>내용 <span class="required">*</span></label>
+                        <textarea id="notice-content" rows="12" required></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>작성자</label>
+                            <input type="text" id="notice-author" value="관리자" readonly />
+                        </div>
+                        <div class="form-group">
+                            <label>작성일</label>
+                            <input type="datetime-local" id="notice-date" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="notice-urgent" /> 긴급 알림
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label>상태</label>
+                        <select id="notice-status">
+                            <option value="draft">임시저장</option>
+                            <option value="sent">발송</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal btn-secondary" onclick="closeModal()">취소</button>
+                <button class="btn-modal btn-warning" onclick="saveDraft()">임시저장</button>
+                <button class="btn-modal btn-primary" onclick="saveNotice()">발송</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 동적 리소스 로딩 -->
+    <script>
+        function loadResources() {
+            const commonScript = document.createElement('script');
+            commonScript.src = '../../js/common.js?_t='+(new Date().toISOString().replace(/[-:T]/g, '').substring(0, 14));
+            commonScript.onload = async function() {
+                try {
+                    const success = await loadCommonResources();
+                    if (success) {
+                        await loadJS('../../js/pages/post-management/notice-board.js');
+                    }
+                } catch (error) {
+                    console.error('리소스 로드 중 오류 발생:', error);
+                }
+            };
+            commonScript.onerror = function() {
+                console.error('common.js 로드 실패');
+            };
+            document.head.appendChild(commonScript);
+        }
+        
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', loadResources);
+        } else {
+            loadResources();
+        }
+    </script>
+</body>
+</html>
+

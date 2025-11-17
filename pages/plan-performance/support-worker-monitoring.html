@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>생활지원사 모니터링</title>
+    
+    <!-- CSS와 JS는 JavaScript에서 동적으로 로드됩니다 -->
+    
+</head>
+<body>
+    <div class="container" style="padding: 20px;">
+        <div class="content">
+            <!-- 상단 헤더 -->
+            <div style="margin-bottom: 20px; border-bottom: 2px solid #007bff; padding-bottom: 10px;">
+                <h2 style="margin: 0; font-size: 18px; font-weight: bold;">계획관리 > 생활지원사 모니터링</h2>
+            </div>
+
+            <!-- 검색 영역 -->
+            <div style="margin-bottom: 20px; padding: 15px; background: #f9f9f9; border-radius: 5px; display: flex; align-items: center; gap: 15px;">
+                <div style="display: flex; align-items: center; gap: 5px;">
+                    <label style="font-weight: bold; white-space: nowrap;">조회일자:</label>
+                    <input type="text" id="inquiryDate" style="padding: 5px 10px; border: 1px solid #ddd; border-radius: 3px; width: 120px;" readonly />
+                </div>
+                <div style="display: flex; align-items: center; gap: 5px;">
+                    <label style="font-weight: bold; white-space: nowrap;">사회복지사:</label>
+                    <select id="welfareWorkerSelect" style="padding: 5px 10px; border: 1px solid #ddd; border-radius: 3px; width: 150px;">
+                        <option value="전체">전체</option>
+                    </select>
+                </div>
+                <button id="searchBtn" style="padding: 8px 20px; background: #007bff; color: white; border: none; border-radius: 3px; cursor: pointer; font-weight: bold;">
+                    검색
+                </button>
+            </div>
+
+            <!-- 그리드 영역 -->
+            <div id="gridContainer" style="border: 1px solid #ddd; border-radius: 5px; padding: 15px; width: 100%; box-sizing: border-box; overflow-x: hidden;">
+                <table id="MainGrid" style="width: 100%;"></table>
+                <div id="MainPager"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 동적 리소스 로딩 -->
+    <script>
+        // CSS와 JS 파일을 동적으로 로드하는 함수
+        function loadResources() {
+            const commonScript = document.createElement('script');
+            commonScript.src = '../../js/common.js?_t='+(new Date().toISOString().replace(/[-:T]/g, '').substring(0, 14));
+            commonScript.onload = async function() {
+                try {
+                    // 공통 리소스 로드
+                    const success = await loadCommonResources();
+                    if (success) {
+                        // 공통 그리드 스크립트 로드
+                        await loadJS('../../js/commonGrid.js');
+                        // Support Worker Monitoring 페이지 전용 스크립트 로드
+                        await loadJS('../../js/pages/plan-performance/support-worker-monitoring.js');
+                        
+                        // initMainGrid 함수가 정의될 때까지 대기 후 초기화
+                        let attempts = 0;
+                        const maxAttempts = 50; // 5초 대기
+                        const checkInitMainGrid = setInterval(() => {
+                            attempts++;
+                            if (typeof initMainGrid === 'function') {
+                                clearInterval(checkInitMainGrid);
+                                // 그리드 초기화
+                                initMainGrid();
+                                // 그리드 초기화 후 페이지별 초기화
+                                setTimeout(() => {
+                                    if (typeof initPage === 'function') {
+                                        initPage();
+                                    }
+                                }, 500);
+                            } else if (attempts >= maxAttempts) {
+                                clearInterval(checkInitMainGrid);
+                                console.error('initMainGrid 함수를 찾을 수 없습니다');
+                            }
+                        }, 100);
+                    }
+                } catch (error) {
+                    console.error('리소스 로드 중 오류 발생:', error);
+                }
+            };
+            commonScript.onerror = function() {
+                console.error('common.js 로드 실패');
+            };
+            document.head.appendChild(commonScript);
+        }
+        
+        // DOM 로드 완료 후 리소스 로드
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', loadResources);
+        } else {
+            loadResources();
+        }
+    </script>
+</body>
+</html>
+

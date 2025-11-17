@@ -1,0 +1,31 @@
+{
+  "currentUser": {
+    "id": "user001",
+    "name": "임현정",
+    "role": "manager",
+    "institution": "실버에듀넷-TEST",
+    "permissions": ["admin", "manager", "user"]
+  },
+  "roles": {
+    "admin": {
+      "name": "관리자",
+      "description": "모든 기능에 접근 가능",
+      "permissions": ["admin", "manager", "user"]
+    },
+    "manager": {
+      "name": "매니저",
+      "description": "관리 및 운영 기능 접근 가능",
+      "permissions": ["manager", "user"]
+    },
+    "user": {
+      "name": "사용자",
+      "description": "기본 업무 기능 접근 가능",
+      "permissions": ["user"]
+    }
+  },
+  "permissionDescriptions": {
+    "admin": "시스템 관리자 권한 - 모든 기능 접근 가능",
+    "manager": "관리자 권한 - 관리 및 운영 기능 접근 가능",
+    "user": "일반 사용자 권한 - 기본 업무 기능 접근 가능"
+  }
+}

@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>기관관리</title>
+    
+    <!-- CSS와 JS는 JavaScript에서 동적으로 로드됩니다 -->
+    
+</head>
+<body>
+    <div class="container">
+        <div class="content">
+            <!-- 헤더 섹션 -->
+            <div class="page-header">
+                <h1><i class="fas fa-building"></i> 기관관리</h1>
+                <p>기관 정보를 관리하고 모니터링합니다</p>
+            </div>
+
+            <!-- 통계 카드 섹션 -->
+            <div class="stats-section">
+                <div class="stat-card stat-primary">
+                    <div class="stat-icon">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="total-institutions">0</h3>
+                        <p>전체 기관</p>
+                    </div>
+                </div>
+                <div class="stat-card stat-success">
+                    <div class="stat-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="active-institutions">0</h3>
+                        <p>활성 기관</p>
+                    </div>
+                </div>
+                <div class="stat-card stat-warning">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="total-employees">0</h3>
+                        <p>전체 직원</p>
+                    </div>
+                </div>
+                <div class="stat-card stat-info">
+                    <div class="stat-icon">
+                        <i class="fas fa-user-friends"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 id="total-beneficiaries">0</h3>
+                        <p>전체 대상자</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 검색 및 필터 섹션 -->
+            <div class="search-section">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="search-input" placeholder="기관명, 주소, 연락처로 검색..." />
+                    <button class="btn-search" onclick="searchInstitutions()">
+                        <i class="fas fa-search"></i> 검색
+                    </button>
+                    <button class="btn-reset" onclick="resetSearch()">
+                        <i class="fas fa-redo"></i> 초기화
+                    </button>
+                </div>
+                <div class="filter-section">
+                    <select id="status-filter" class="filter-select" onchange="filterInstitutions()">
+                        <option value="">전체 상태</option>
+                        <option value="active">활성</option>
+                        <option value="inactive">비활성</option>
+                        <option value="pending">대기중</option>
+                    </select>
+                    <select id="region-filter" class="filter-select" onchange="filterInstitutions()">
+                        <option value="">전체 지역</option>
+                        <option value="seoul">서울</option>
+                        <option value="busan">부산</option>
+                        <option value="incheon">인천</option>
+                        <option value="gyeonggi">경기</option>
+                        <option value="other">기타</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- 액션 버튼 섹션 -->
+            <div class="action-section">
+                <button class="btn-action btn-primary" onclick="addInstitution()">
+                    <i class="fas fa-plus"></i> 기관 등록
+                </button>
+                <button class="btn-action btn-success" onclick="exportInstitutions()">
+                    <i class="fas fa-file-excel"></i> 엑셀 내보내기
+                </button>
+                <button class="btn-action btn-info" onclick="refreshInstitutions()">
+                    <i class="fas fa-sync-alt"></i> 새로고침
+                </button>
+            </div>
+
+            <!-- 기관 목록 섹션 -->
+            <div class="institutions-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-list"></i> 기관 목록</h2>
+                    <span class="result-count" id="result-count">총 0개</span>
+                </div>
+                <div class="institutions-list" id="institutions-list">
+                    <!-- 동적으로 로드되는 기관 목록 -->
+                </div>
+            </div>
+
+            <!-- 최근 활동 섹션 -->
+            <div class="activity-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-clock"></i> 최근 기관 활동</h2>
+                    <button class="btn-view-all" onclick="viewAllActivities()">전체 보기</button>
+                </div>
+                <div class="activity-list" id="activity-list">
+                    <!-- 동적으로 로드되는 활동 목록 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 기관 등록/수정 모달 (간단한 버전) -->
+    <div class="modal" id="institution-modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">기관 등록</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="institution-form">
+                    <div class="form-group">
+                        <label>기관명 <span class="required">*</span></label>
+                        <input type="text" id="institution-name" required />
+                    </div>
+                    <div class="form-group">
+                        <label>기관 코드</label>
+                        <input type="text" id="institution-code" />
+                    </div>
+                    <div class="form-group">
+                        <label>주소 <span class="required">*</span></label>
+                        <input type="text" id="institution-address" required />
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>연락처</label>
+                            <input type="tel" id="institution-phone" />
+                        </div>
+                        <div class="form-group">
+                            <label>팩스</label>
+                            <input type="tel" id="institution-fax" />
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>담당자명</label>
+                            <input type="text" id="institution-manager" />
+                        </div>
+                        <div class="form-group">
+                            <label>담당자 연락처</label>
+                            <input type="tel" id="institution-manager-phone" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>상태</label>
+                        <select id="institution-status">
+                            <option value="active">활성</option>
+                            <option value="inactive">비활성</option>
+                            <option value="pending">대기중</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>비고</label>
+                        <textarea id="institution-notes" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal btn-secondary" onclick="closeModal()">취소</button>
+                <button class="btn-modal btn-primary" onclick="saveInstitution()">저장</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 동적 리소스 로딩 -->
+    <script>
+        // CSS와 JS 파일을 동적으로 로드하는 함수
+        function loadResources() {
+            const commonScript = document.createElement('script');
+            commonScript.src = '../js/common.js?_t='+(new Date().toISOString().replace(/[-:T]/g, '').substring(0, 14));
+            commonScript.onload = async function() {
+                try {
+                    // 공통 리소스 로드
+                    const success = await loadCommonResources();
+                    if (success) {
+                        // Institution Management 페이지 전용 스크립트 로드
+                        await loadJS('../js/pages/institution-management.js');
+                    }
+                } catch (error) {
+                    console.error('리소스 로드 중 오류 발생:', error);
+                }
+            };
+            commonScript.onerror = function() {
+                console.error('common.js 로드 실패');
+            };
+            document.head.appendChild(commonScript);
+        }
+        
+        // DOM 로드 완료 후 리소스 로드
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', loadResources);
+        } else {
+            loadResources();
+        }
+    </script>
+</body>
+</html>
+

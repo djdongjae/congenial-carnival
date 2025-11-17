@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>사후관리 실적등록</title>
+    
+    <!-- CSS와 JS는 JavaScript에서 동적으로 로드됩니다 -->
+    
+</head>
+<body>
+    <div class="container" style="height: 100%; display: flex; flex-direction: column;">
+        <!-- 헤더 -->
+        <div class="header" style="padding: 15px 20px; background: #f8f9fa !important; background-color: #f8f9fa !important; border-bottom: 1px solid #dee2e6; display: flex; justify-content: space-between; align-items: center;">
+            <div class="panel-header" style="padding: 0;">
+                <h2 style="font-size: 1.2rem; font-weight: 600; color: #333 !important; margin: 0;">사후관리 > 실적등록</h2>
+                <p style="font-size: 0.9rem; color: #666 !important; margin: 5px 0 0 0;">사후관리 일정등록</p>
+            </div>
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <h2 id="currentMonth" style="font-size: 1.3rem; font-weight: 600; color: #333; margin: 0;">2025.11</h2>
+                <button id="btnClose" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #666;">×</button>
+            </div>
+        </div>
+        
+        <div class="content" style="display: flex; flex-direction: column; flex: 1; min-height: 0; padding: 15px; gap: 15px; overflow: hidden;">
+            <!-- 상단: 3개 패널 (왼쪽, 중간, 오른쪽) -->
+            <div style="display: flex; flex-direction: row; gap: 15px; flex: 0 0 45%; min-height: 0;">
+                <!-- 왼쪽 패널: 생활지원사 및 대상자 -->
+                <div class="left-panel" style="width: 320px; min-width: 320px; max-width: 320px; background-color: #ffffff; border: 1px solid #dee2e6; border-radius: 8px; display: flex; flex-direction: column; overflow: hidden; flex-shrink: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <!-- 생활지원사 섹션 -->
+                    <div class="section" style="border-bottom: 1px solid #dee2e6;">
+                        <div class="panel-header" style="padding: 15px 20px; background: #f8f9fa !important; background-color: #f8f9fa !important; border-bottom: 1px solid #dee2e6;">
+                            <h3 style="font-size: 1.1rem; font-weight: 600; color: #333 !important; margin: 0;">생활지원</h3>
+                        </div>
+                        <div style="padding: 15px;">
+                            <div id="selectedWorker" style="padding: 10px 12px; background-color: #fff3cd; border: 1px solid #ffc107; border-radius: 4px; font-weight: 500; font-size: 14px; color: #856404;">김영희</div>
+                        </div>
+                    </div>
+                    
+                    <!-- 대상자 테이블 -->
+                    <div class="section" style="flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden;">
+                        <div class="panel-header" style="padding: 15px 20px; background: #f8f9fa !important; background-color: #f8f9fa !important; border-bottom: 1px solid #dee2e6;">
+                            <h3 style="font-size: 1.1rem; font-weight: 600; color: #333 !important; margin: 0;">대상자</h3>
+                        </div>
+                        <div style="flex: 1; min-height: 0; display: flex; flex-direction: column; padding: 15px; overflow: hidden;">
+                            <div class="grid-container" style="flex: 1; min-height: 0; overflow: auto; display: flex; flex-direction: column;">
+                                <table id="BeneficiaryGrid"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 중간 패널: 제공서비스 집계 -->
+                <div class="middle-panel" style="flex: 1; min-width: 0; background-color: #ffffff; border: 1px solid #dee2e6; border-radius: 8px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <div class="section" style="flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden;">
+                        <div class="panel-header" style="padding: 15px 20px; background: #f8f9fa !important; background-color: #f8f9fa !important; border-bottom: 1px solid #dee2e6;">
+                            <h3 style="font-size: 1.1rem; font-weight: 600; color: #333 !important; margin: 0;">제공서비스</h3>
+                        </div>
+                        <div style="flex: 1; min-height: 0; display: flex; flex-direction: column; padding: 15px; overflow: hidden;">
+                            <div class="grid-container" style="flex: 1; min-height: 0; overflow: auto; display: flex; flex-direction: column;">
+                                <table id="ServiceSummaryGrid"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 오른쪽 패널: 메모관리 -->
+                <div class="right-panel" style="width: 420px; min-width: 420px; max-width: 420px; background-color: #ffffff; border: 1px solid #dee2e6; border-radius: 8px; display: flex; flex-direction: column; overflow: hidden; flex-shrink: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <div class="section" style="flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden;">
+                        <div class="panel-header" style="padding: 15px 20px; background: #f8f9fa !important; background-color: #f8f9fa !important; border-bottom: 1px solid #dee2e6;">
+                            <h3 style="font-size: 1.1rem; font-weight: 600; color: #333 !important; margin: 0;">메모관리</h3>
+                        </div>
+                        <div style="flex: 1; min-height: 0; display: flex; flex-direction: column; padding: 15px; overflow: hidden;">
+                            <div class="grid-container" style="flex: 1; min-height: 0; overflow: auto; display: flex; flex-direction: column;">
+                                <table id="MemoGrid"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 하단: 실적 상세 테이블 -->
+            <div class="bottom-panel" style="flex: 1; min-height: 0; background-color: #ffffff; border: 1px solid #dee2e6; border-radius: 8px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <div class="section" style="flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden;">
+                    <div class="panel-header" style="padding: 15px 20px; background: #f8f9fa !important; background-color: #f8f9fa !important; border-bottom: 1px solid #dee2e6;">
+                        <h3 style="font-size: 1.1rem; font-weight: 600; color: #333 !important; margin: 0;">실적</h3>
+                    </div>
+                    <div style="flex: 1; min-height: 0; display: flex; flex-direction: column; padding: 15px; overflow: hidden;">
+                        <div class="grid-container" style="flex: 1; min-height: 0; overflow: auto; display: flex; flex-direction: column;">
+                            <table id="PerformanceGrid"></table>
+                            <div id="PerformancePager"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 작업일지 팝업 (숨김) -->
+    <div id="workLogModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+        <div style="background-color: #fff; border-radius: 8px; padding: 20px; width: 90%; max-width: 800px; max-height: 90%; overflow: auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 style="font-size: 1.2rem; font-weight: 600; color: #333; margin: 0;">작업일지</h3>
+                <button id="btnCloseWorkLog" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #666;">×</button>
+            </div>
+            <div id="workLogContent" style="min-height: 400px;">
+                <!-- 작업일지 내용이 여기에 표시됩니다 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 동적 리소스 로딩 -->
+    <script>
+        // CSS와 JS 파일을 동적으로 로드하는 함수
+        function loadResources() {
+            const commonScript = document.createElement('script');
+            commonScript.src = '../../js/common.js?_t='+(new Date().toISOString().replace(/[-:T]/g, '').substring(0, 14));
+            commonScript.onload = async function() {
+                try {
+                    // 공통 리소스 로드
+                    const success = await loadCommonResources();
+                    if (success) {
+                        // 공통 그리드 스크립트 로드
+                        await loadJS('../../js/commonGrid.js');
+                        // 사후관리 실적등록 페이지 전용 스크립트 로드
+                        await loadJS('../../js/pages/aftercare-management/aftercare-performance.js');
+                        
+                        // initAftercarePerformance 함수가 정의될 때까지 대기 후 초기화
+                        let attempts = 0;
+                        const maxAttempts = 50; // 5초 대기
+                        const checkInitAftercarePerformance = setInterval(() => {
+                            attempts++;
+                            if (typeof initAftercarePerformance === 'function') {
+                                clearInterval(checkInitAftercarePerformance);
+                                initAftercarePerformance();
+                            } else if (attempts >= maxAttempts) {
+                                clearInterval(checkInitAftercarePerformance);
+                                console.error('initAftercarePerformance 함수를 찾을 수 없습니다');
+                            }
+                        }, 100);
+                    }
+                } catch (error) {
+                    console.error('리소스 로드 중 오류 발생:', error);
+                }
+            };
+            commonScript.onerror = function() {
+                console.error('common.js 로드 실패');
+            };
+            document.head.appendChild(commonScript);
+        }
+        
+        // DOM 로드 완료 후 리소스 로드
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', loadResources);
+        } else {
+            loadResources();
+        }
+    </script>
+</body>
+</html>
+
